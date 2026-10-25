@@ -1,4 +1,6 @@
 {
+    "name": "snipershady/annosynf",
+    "description": "De novo transcriptome annotation with NCBI BLAST+, results stored in MySQL and browsable from a web interface (rewrite of Annocript).",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",

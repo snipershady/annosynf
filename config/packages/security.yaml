@@ -5,7 +5,10 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        app_users:
+            entity:
+                class: App\Entity\User
+                property: email
 
     firewalls:
         dev:
@@ -14,18 +17,28 @@ security:
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_users
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                csrf_token_id: authenticate
+                default_target_path: app_dashboard
+            logout:
+                path: app_logout
+                target: app_dashboard
 
-            # Activate different ways to authenticate:
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+    # §B.15: ogni utente abilitato (ROLE_USER) legge; gli analisti gestiscono le analisi; gli
+    # amministratori release e utenti. ROLE_DISABLED resta fuori dalla gerarchia.
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_ANALYST]
+        ROLE_ANALYST: [ROLE_VIEWER]
+        ROLE_USER: [ROLE_VIEWER]
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/account, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

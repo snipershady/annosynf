@@ -1,10 +1,15 @@
 import './stimulus_bootstrap.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
-import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+// I fogli di stile sono collegati con <link> in base.html.twig, non importati da qui: AssetMapper
+// trasformerebbe gli import CSS in moduli "data:", vietati dalla Content-Security-Policy.
+
+// Turbo ricrea gli script del <body> a ogni visita. In Firefox la copia degli attributi sovrascrive il
+// nonce con quello (nascosto, quindi vuoto) dell'originale e la CSP blocca lo script. Quello vuoto che la
+// web debug toolbar mette in sviluppo non fa nulla: Turbo lo lascia stare.
+document.addEventListener('turbo:before-render', (event) => {
+    event.detail.newBody.querySelectorAll('script:not([src])').forEach((script) => {
+        if (script.textContent.trim() === '') {
+            script.setAttribute('data-turbo-eval', 'false');
+        }
+    });
+});

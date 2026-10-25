@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-3" id="dashboard-title">Dashboard</h1>
+    <div class="row g-3">
+        <section class="col-md-6" aria-labelledby="releases-title">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 card-title" id="releases-title">Reference releases</h2>
+                    <p class="card-text text-body-secondary">No reference release has been imported yet.</p>
+                </div>
+            </div>
+        </section>
+        <section class="col-md-6" aria-labelledby="analyses-title">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 card-title" id="analyses-title">Recent analyses</h2>
+                    <p class="card-text text-body-secondary">No analysis has been run yet.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

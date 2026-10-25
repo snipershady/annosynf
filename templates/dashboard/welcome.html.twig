@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7">
+            <section aria-labelledby="about-title">
+                <h1 class="h3 mb-3" id="about-title">About annosynf</h1>
+                <p>annosynf annotates <em>de novo</em> transcriptomes: it aligns your transcripts against UniProtKB, UniRef, the Conserved Domain Database and RNAcentral with NCBI BLAST+, predicts open reading frames and coding potential, flags putative long non-coding RNAs and stores every result in a database you can browse, filter, chart and compare.</p>
+                <p class="text-body-secondary">Analyses are available to registered users. Create an account, confirm your email address and an administrator will enable it.</p>
+                <p class="d-flex gap-2">
+                    <a class="btn btn-primary" href="{{ path('app_login') }}">Sign in</a>
+                    <a class="btn btn-outline-primary" href="{{ path('app_register') }}">Register</a>
+                </p>
+            </section>
+        </div>
+    </div>
+{% endblock %}

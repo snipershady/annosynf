@@ -3,7 +3,11 @@ framework:
     secret: '%env(APP_SECRET)%'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    # §B.5.3: sessioni HTTP su Redis, condivise tra più istanze web.
+    session:
+        handler_id: '%env(REDIS_URL)%'
+        cookie_secure: auto
+        cookie_samesite: lax
 
     #esi: true
     #fragments: true
