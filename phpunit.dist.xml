@@ -36,6 +36,10 @@
         <testsuite name="functional">
             <directory>tests/Functional</directory>
         </testsuite>
+        <!-- Parità con il legacy sui fixture di tests/Fixtures/golden (CLAUDE.md §B.12). -->
+        <testsuite name="golden">
+            <directory>tests/Golden</directory>
+        </testsuite>
     </testsuites>
 
     <source ignoreSuppressionOfDeprecations="true"

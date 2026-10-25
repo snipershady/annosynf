@@ -1,0 +1,61 @@
+# Regole di dipendenza tra gli strati (CLAUDE.md §B.3), verificate da `composer deptrac` dentro `composer qa`.
+#
+# - Domain: logica pura (parser, algoritmi, value object). Solo PHP: nessuna libreria, nemmeno PSR.
+# - Application: casi d'uso e porte. Solo Domain, PHP e interfacce PSR (es. ClockInterface).
+# - Adapter: tutto il resto di src/ (Entity, Repository, Infrastructure, Controller, Command, Form, Security,
+#   Message*, Twig, EventSubscriber, Kernel). Implementa le porte e fa il wiring: può usare tutto.
+#
+# Le classi esterne stanno in PhpCore, Psr o Vendor, così ogni dipendenza ricade in uno strato e nessuna
+# sfugge al controllo (--fail-on-uncovered).
+deptrac:
+  paths:
+    - ./src
+  cache_file: ./var/cache/deptrac.cache
+  layers:
+    - name: Domain
+      collectors:
+        - type: classNameRegex
+          value: '#^App\\Domain\\#'
+    - name: Application
+      collectors:
+        - type: classNameRegex
+          value: '#^App\\Application\\#'
+    - name: Adapter
+      collectors:
+        - type: bool
+          must:
+            - type: classNameRegex
+              value: '#^App\\#'
+          must_not:
+            - type: classNameRegex
+              value: '#^App\\(Domain|Application)\\#'
+    - name: PhpCore
+      collectors:
+        - type: php_internal
+          value: '.*'
+    - name: Psr
+      collectors:
+        - type: classNameRegex
+          value: '#^Psr\\#'
+    - name: Vendor
+      collectors:
+        - type: bool
+          must:
+            - type: classNameRegex
+              value: '#^(?!App\\|Psr\\).+#'
+          must_not:
+            - type: php_internal
+              value: '.*'
+  ruleset:
+    Domain:
+      - PhpCore
+    Application:
+      - Domain
+      - PhpCore
+      - Psr
+    Adapter:
+      - Domain
+      - Application
+      - PhpCore
+      - Psr
+      - Vendor

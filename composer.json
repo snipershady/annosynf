@@ -2,7 +2,7 @@
     "name": "snipershady/annosynf",
     "description": "De novo transcriptome annotation with NCBI BLAST+, results stored in MySQL and browsable from a web interface (rewrite of Annocript).",
     "type": "project",
-    "license": "proprietary",
+    "license": "GPL-3.0-or-later",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -103,6 +103,7 @@
         "cs:fix": "php-cs-fixer fix --ansi",
         "cs:check": "php-cs-fixer fix --dry-run --diff --ansi",
         "stan": "phpstan analyse --memory-limit=1G --ansi",
+        "deptrac": "deptrac analyse --no-progress --fail-on-uncovered --report-uncovered --ansi",
         "lint": [
             "@php bin/console lint:container",
             "@php bin/console lint:twig templates/",
@@ -110,6 +111,7 @@
             "@php bin/console doctrine:schema:validate --skip-sync"
         ],
         "test": "phpunit",
+        "test:golden": "phpunit --testsuite golden",
         "test:coverage": [
             "@putenv XDEBUG_MODE=coverage",
             "phpunit --coverage-clover var/coverage/clover.xml",
@@ -124,6 +126,7 @@
             "@rector:check",
             "@cs:check",
             "@stan",
+            "@deptrac",
             "@lint",
             "@test:coverage",
             "@test:browser"
@@ -144,6 +147,7 @@
         }
     },
     "require-dev": {
+        "deptrac/deptrac": "^4.7",
         "friendsofphp/php-cs-fixer": "^3.95.27",
         "phpstan/phpstan": "^2.3.2",
         "phpstan/phpstan-deprecation-rules": "^2.0.5",

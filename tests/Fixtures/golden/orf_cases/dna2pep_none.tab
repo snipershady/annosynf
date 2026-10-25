@@ -1,0 +1,17 @@
+strict_forward_rframe-1_ORF	PLGFHG	......	/orf_mode="none"; /dna="CCCTTAGGGTTTCATGGC";
+none_after_stop_rframe-1_ORF	LPGFQL	......	/orf_mode="none"; /dna="CTACCCGGGTTTCAATTA";
+alternative_start_rframe-1_ORF	LGHFQG	......	/orf_mode="none"; /dna="TTAGGGCATTTTCAAGGG";
+tie_frame1_frame3_rframe-1_ORF	PRASLFH	.......	/orf_mode="none"; /dna="CCTAGGGCATCCTTATTTCAT";
+tie_frame2_frame3_rframe-1_ORF	SHGYM	....M	/orf_mode="none"; /dna="TCACATGGTTACATG";
+reverse_strand_rframe1_ORF	LRVSW	.....	/orf_mode="none"; /dna="CTTAGGGTTTCATGG";
+runs_to_the_end_rframe1_ORF	MKP	M..	/orf_mode="none"; /dna="ATGAAACCC";
+no_start_rframe-1_ORF	GLGG	....	/orf_mode="none"; /dna="GGCTTAGGCGGC";
+shorter_than_a_codon_rframe1_ORF			/orf_mode="none"; /dna="";
+only_stops_rframe-1_ORF	LL	..	/orf_mode="none"; /dna="TTATTA";
+lowercase_rframe-1_ORF	LRVSW	.....	/orf_mode="none"; /dna="cttagggtttcatgg";
+uracil_rframe-1_ORF	LRVSW	.....	/orf_mode="none"; /dna="CTTAGGGTTTCATGG";
+degenerate_codons_rframe-3_ORF	LXXXXX	......	/orf_mode="none"; /dna="CTYANNNCAKTTWRTYCA";
+long_forward_orf_rframe-1_ORF	LSSSSSSSSSSSSH	..............	/orf_mode="none"; /dna="TTAAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCCAT";
+long_reverse_orf_rframe1_ORF	LSSSSSSSSSSSS	.............	/orf_mode="none"; /dna="TTAAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGC";
+single_stop_rframe-1_ORF	L	.	/orf_mode="none"; /dna="TTA";
+only_ambiguous_codon_rframe1_ORF			/orf_mode="none"; /dna="";
