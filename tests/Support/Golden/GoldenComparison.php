@@ -63,6 +63,14 @@ final class GoldenComparison
         ];
     }
 
+    /**
+     * Almeno una differenza è stata ammessa da {@see self::allow()}.
+     */
+    public function usedAllowances(): bool
+    {
+        return $this->usedAllowances !== [];
+    }
+
     public function comparisons(): int
     {
         return $this->comparisons;

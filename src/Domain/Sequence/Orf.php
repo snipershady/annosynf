@@ -39,4 +39,12 @@ final readonly class Orf
     {
         return $this->frame->strand();
     }
+
+    /**
+     * Frame 0..2 come lo scrive Annocript (colonna LongOrfFrame, allineata a BLAST): |frame di dna2pep| − 1.
+     */
+    public function frameOffset(): int
+    {
+        return $this->frame->offset();
+    }
 }

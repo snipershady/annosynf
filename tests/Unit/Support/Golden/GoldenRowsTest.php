@@ -28,6 +28,7 @@ final class GoldenRowsTest extends TestCase
         self::assertSame('M..', $row->annotation);
         self::assertSame('strict', $row->mode);
         self::assertSame('ATGAAAGTT', $row->dna);
+        self::assertSame("comp53_c1_seq1_rframe-3_ORF\tMKV\tM..\t/orf_mode=\"strict\"; /dna=\"ATGAAAGTT\";", $row->line);
 
         $forward = Dna2PepRow::fromLine("id_with_rframe1_ORF_rframe1_ORF\tM\tM\t/orf_mode=\"none\"; /dna=\"ATG\";");
         self::assertSame('id_with_rframe1_ORF', $forward->id, 'only the last suffix is the frame');

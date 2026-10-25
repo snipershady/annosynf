@@ -37,7 +37,11 @@ final class GoldenComparisonTest extends TestCase
         $comparison = new GoldenComparison()
             ->allow('seq1', 'tie between frames 1 and -2')
             ->allow('seq9', 'never differs');
+        $comparison->same('seq1', 'frame', 1, 1);
+        self::assertFalse($comparison->usedAllowances());
+
         $comparison->same('seq1', 'frame', 1, -2);
+        self::assertTrue($comparison->usedAllowances());
 
         self::assertSame(['seq9: allowed difference never happened, remove it'], $comparison->failures());
     }

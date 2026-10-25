@@ -4,7 +4,7 @@ Output dei programmi esterni e di alcune funzioni di Annocript 2.0.1 sui FASTA d
 dal container `legacy-runner` (TODO.md step 0.2). Sono il riferimento dei test di parità dei port PHP:
 `OrfFinder` contro dna2pep (step 2.5), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
 `extractPercentages` (step 1.4), `FastaFormatter`/`FastaSlicer`/`FastaSubset` contro Bio::SeqIO, `create_slices`
-e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` contro dna2pep (step 2.3). Dopo la fase 11 restano come
+e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` e `Dna2PepLineFormatter` contro dna2pep, campo per campo e byte per byte (step 2.3–2.5). Dopo la fase 11 restano come
 dati di regressione congelati: nessun test li rigenera né richiede il container.
 
 ## Contenuto

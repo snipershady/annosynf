@@ -167,10 +167,16 @@ Riferimento riga per riga: `docs/legacy/ports/{dna2pep,mod_translate,ncbi_geneti
   golden di dna2pep; i test unitari usano solo esiti verificati con dna2pep (le prime aspettative scritte a
   mano ignoravano gli ORF sul filamento inverso). Parità campo per campo su trial/example/orf_cases × 3
   modalità: identica, salvo la `S` del caso `degenerate_codons` in `none` (dichiarata nel test).
-- [ ] **2.4 Risultato** (`length_aa`, strand, frame 0..2, coordinate nt, peptide ritradotto con il primo
+- [x] **2.4 Risultato** (`length_aa`, strand, frame 0..2, coordinate nt, peptide ritradotto con il primo
   codone come start) + formatter della riga legacy `<id>_rframe<±f>_ORF…` per il confronto.
-- [ ] **2.5 Golden** contro 0.2 (trial + example, 3 modalità): lunghezza, strand, frame identici;
-  differenze ammesse solo nei pareggi, elencate una per una nel test.
+  `Orf` espone `length()`, `strand()`, `frameOffset()` (0..2, colonna LongOrfFrame), `start`/`end` sul
+  filamento diretto e il peptide ritradotto. `Dna2PepLineFormatter` scrive la riga di dna2pepOut; senza ORF
+  ("NO ORF FOUND") la riga c'è comunque, sul frame 1 con campi vuoti.
+- [x] **2.5 Golden** contro 0.2 (trial + example + orf_cases, 3 modalità): `OrfFinderParityTest` confronta
+  campi, lunghezza/strand/frame come li ricava Annocript, la riga formattata e l'intero file byte per byte;
+  le coordinate devono delimitare il DNA dell'ORF. Nessuna differenza nei pareggi (ordine dei frame di
+  dna2pep); unica differenza ammessa la correzione S↔W (`orf_cases none degenerate_codons`), dove il
+  confronto dell'intero file è sostituito da quello riga per riga.
 
 ## Fase 3 — `Cpc2Predictor`, port di CPC2 (M1) · elimina Python 2, numpy, Biopython, libsvm
 
@@ -245,7 +251,10 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
 ## Fase 8 — Annotazione (M5) · elimina `Bio::DB::SeqFeature::Store`, DB `gffDB_*`, `outHash`
 
 - [ ] **8.1 `BestHitSelector`, `LncRnaClassifier` (bitmask delle 7 condizioni), `CodingClassifier`,
-  `PathwayLevels`** in `src/Domain/Annotation`, con test di tutte le combinazioni.
+  `PathwayLevels`** in `src/Domain/Annotation`, con test di tutte le combinazioni. Attenzione: Annocript
+  legge la riga "NO ORF FOUND" di dna2pep come ORF di lunghezza 0 (`+`, frame 0), quindi la condizione 6
+  ("ORF presente e ≤ NCORFLength") è vera anche senza ORF; `OrfFinder::find()` restituisce null in quel
+  caso: decidere se replicare (parità del golden `ann_out`) o correggere e dichiararlo.
 - [ ] **8.2 `BuildAnnotations`** a batch → `transcript_annotation` + junction GO/enzimi/pathway.
 - [ ] **8.3 Golden `ann_out`**: legacy eseguito nel container su una mini-release ridotta; confronto cella
   per cella, con le colonne toccate dalle correzioni §A.12 elencate esplicitamente.
@@ -295,5 +304,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ## Prossimo passo consigliato
 
-0.3 (deptrac) → 0.1/0.2 (container e golden di dna2pep/CPC2) → 1.1. Le fasi 1–3 non toccano il database
-e producono da sole un risultato verificabile: i port nativi identici al legacy.
+Fasi 0–2 completate (salvo la decisione 0.6). Prossimo: fase 3 (port di CPC2, da 3.1), che chiude M1. Le
+fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+legacy.

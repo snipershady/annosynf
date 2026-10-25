@@ -89,6 +89,7 @@ final class OrfFinderTest extends TestCase
         self::assertNotNull($orf);
         self::assertSame(ReadingFrame::Minus3, $orf->frame);
         self::assertSame('-', $orf->strand());
+        self::assertSame(2, $orf->frameOffset(), 'Annocript writes frame -3 as 2');
         self::assertSame('MKP', $orf->peptide);
         self::assertSame('ATGAAACCC', $orf->dna);
         self::assertSame([5, 13], [$orf->start, $orf->end]);

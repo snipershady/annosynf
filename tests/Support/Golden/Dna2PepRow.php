@@ -19,6 +19,7 @@ final readonly class Dna2PepRow
         public string $annotation,
         public string $mode,
         public string $dna,
+        public string $line,
     ) {
     }
 
@@ -35,7 +36,7 @@ final readonly class Dna2PepRow
             throw new UnexpectedValueException(\sprintf('Not a dna2pep tab line: "%s".', mb_strimwidth($line, 0, 80, '…')));
         }
 
-        return new self($name[1], (int) $name[2], $fields[1], $fields[2], $qualifiers[1], $qualifiers[2]);
+        return new self($name[1], (int) $name[2], $fields[1], $fields[2], $qualifiers[1], $qualifiers[2], $line);
     }
 
     /**
