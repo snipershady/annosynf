@@ -2,7 +2,7 @@
 
 Output dei programmi esterni e di alcune funzioni di Annocript 2.0.1 sui FASTA di `tests/Fixtures/fasta/`, prodotti **una volta**
 dal container `legacy-runner` (TODO.md step 0.2). Sono il riferimento dei test di parità dei port PHP:
-`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `FickettScore` contro CPC2 (step 3.3), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
+`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `FickettScore` contro CPC2 (step 3.3), `IsoelectricPoint` contro Biopython (step 3.4), `Libsvm*` contro libsvm (step 3.5), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
 `extractPercentages` (step 1.4), `FastaFormatter`/`FastaSlicer`/`FastaSubset` contro Bio::SeqIO, `create_slices`
 e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` e `Dna2PepLineFormatter` contro dna2pep, campo per campo e byte per byte (step 2.3–2.5). Dopo la fase 11 restano come
 dati di regressione congelati: nessun test li rigenera né richiede il container.
@@ -16,6 +16,8 @@ dati di regressione congelati: nessun test li rigenera né richiede il container
 | `<set>/cpc2_orf.tsv` | ORF scelto da `FindCDS` di CPC2 e sua traduzione Biopython (comando `cpc2orf`): `id, inizio 0-based, integrity (0 = nessun ORF), ORF, peptide` | una per sequenza |
 | `cpc2_cases/cpc2_orf.tsv`, `cpc2.tsv`, `cpc2_scaled.svm` | gli stessi file di CPC2 sui casi limite di `fasta/cpc2_orf_cases.fasta` (pareggi tra frame, ATG interni, ORF senza stop, IUPAC, minuscole e U, nessun ATG; per il Fickett una base, molte N, omopolimero) | una per sequenza |
 | `cpc2_cases/codons.tsv` | `mRNA_translate` di CPC2 (Biopython 1.76, `Seq.translate()`) per tutti i 4913 codoni su `ACGTRYMKWSBDHVNX-`; `!` dove Biopython solleva TranslationError (comando `cpc2codons`) | 4913 |
+| `cpc2_cases/isoelectric.tsv` | `ProtParam.ProteinAnalysis(p).isoelectric_point()` di Biopython 1.76 sui peptidi di `peptides/isoelectric_cases.tsv` (terminali, residui carichi, stop interni, casi casuali): `nome, repr, str` (comando `isoelectric`) | 80 |
+| `libsvm/tiny.predictions` | `svm-predict -b 1` di libsvm 3.18 sul modello minimo `libsvm/tiny.model` (etichette 0 1, un vettore di supporto senza feature) e sui vettori di `libsvm/tiny.svm` (comando `svmpredict`) | intestazione + 8 |
 | `<set>/cpc2_scaled.svm` | vettori delle feature di CPC2 dopo `svm-scale -r cpc2.range` | una per sequenza |
 | `<set>/atgc_percentages.tsv` | `extractPercentages` di `LIB/output_and_stats.pm` (il file `ATGC_Percentages.txt`) | intestazione + una per sequenza |
 | `<set>/atgc_percentages.tsv.averages` | le medie restituite dalla stessa funzione (A, G, T, C, N, GC complessivo) | intestazione + una |
@@ -60,7 +62,7 @@ randomizza l'hash, quindi anche l'ordine di visita dei frame di dna2pep, che dec
 
 | Componente | Versione / checksum |
 |---|---|
-| Immagine | `annosynf/legacy-runner:2.0.1`, `sha256:f4ccf45fcb328a105ee0d41c1b11ae4da79930625b411e29e2f435ba6a3ce7c2` (base `python:2.7.18-slim-buster`) |
+| Immagine | `annosynf/legacy-runner:2.0.1`, `sha256:2cccbf289692dea37f24a70df6500d89de0a88ba6f1e4374f5b341cbfd5fd032` (base `python:2.7.18-slim-buster`) |
 | Python / numpy / Biopython | 2.7.18 / 1.16.6 / 1.76 |
 | dna2pep | 1.1, `dna2pep-1.1.tar.gz` sha256 `62ee2217b086163b7f413f29835e4a972084c0d3b438a33176fb6adf789ece21` |
 | CPC2 | beta, `CPC2-beta.tar.gz` sha256 `1df1ef723159055d26ff41de8f9ac84df8bcb097eea264cb4b1d1c53d9aa8bcf` |
@@ -85,8 +87,9 @@ strand = segno e frame = `|f| − 1`.
 ```
 
 I numeri sono scritti con `str()` di Python 2 (12 cifre significative per i float); `coding_probability` è
-stampata da `svm-predict` con `%g` (6 cifre significative). I test confrontano Fickett, pI e probabilità con
-tolleranza 1e-6. Attenzione per il port: CPC2 passa a `svm-scale` i valori **già convertiti con `str()`**
+stampata da `svm-predict` con `%g` (6 cifre significative). Il port (step 3.6) riproduce l'output byte per
+byte; i test confrontano byte per byte tutte le colonne tranne `coding_probability`, con tolleranza 1e-6:
+dipende da exp() della libm, che tra versioni di glibc differisce nell'ultimo bit (step 3.7). Attenzione per il port: CPC2 passa a `svm-scale` i valori **già convertiti con `str()`**
 (pI arrotondato a 12 cifre significative), quindi lo scaling va fatto sullo stesso arrotondamento.
 
 ## Riepilogo dei dati

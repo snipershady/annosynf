@@ -1,0 +1,15 @@
+svm_type c_svc
+kernel_type rbf
+gamma 0.5
+nr_class 2
+total_sv 4
+rho 0.2
+label 0 1
+probA 1.5
+probB -0.3
+nr_sv 2 2
+SV
+1.25 1:0.5 2:-0.25 
+0.75 
+-1 1:-0.5 3:1 
+-1 2:0.75 3:-0.5 

@@ -17,6 +17,9 @@ final readonly class FickettScore
 {
     private const array BASES = ['A', 'C', 'G', 'T'];
 
+    /** Basi lette per volta: multiplo di 3, così ogni blocco inizia in fase 0. */
+    private const int BLOCK = 3 * 16384;
+
     private const array POSITION_THRESHOLDS = [1.9, 1.8, 1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 0.0];
 
     private const array CONTENT_THRESHOLDS = [0.33, 0.31, 0.29, 0.27, 0.25, 0.23, 0.21, 0.19, 0.17, 0.0];
@@ -69,33 +72,31 @@ final readonly class FickettScore
     }
 
     /**
-     * Occorrenze di A, C, G, T in ciascuna fase (posizioni 0, 1, 2 dei codoni, come dna[k::3]).
+     * Occorrenze di A, C, G, T in ciascuna fase (posizioni 0, 1, 2 dei codoni, come dna[k::3]). La sequenza si
+     * scorre a blocchi di codoni, così la memoria non cresce con la sua lunghezza.
      *
      * @return array{array<string, int>, array<string, int>, array<string, int>}
      */
     private function phaseCounts(string $dna): array
     {
-        $phases = ['', '', ''];
+        $counts = [array_fill_keys(self::BASES, 0), array_fill_keys(self::BASES, 0), array_fill_keys(self::BASES, 0)];
 
-        foreach (str_split($dna, 3) as $codon) {
-            $phases[0] .= $codon[0];
-            $phases[1] .= $codon[1] ?? '';
-            $phases[2] .= $codon[2] ?? '';
-        }
+        for ($offset = 0; $offset < \strlen($dna); $offset += self::BLOCK) {
+            $phases = ['', '', ''];
 
-        return [$this->baseCounts($phases[0]), $this->baseCounts($phases[1]), $this->baseCounts($phases[2])];
-    }
+            foreach (str_split(substr($dna, $offset, self::BLOCK), 3) as $codon) {
+                $phases[0] .= $codon[0];
+                $phases[1] .= $codon[1] ?? '';
+                $phases[2] .= $codon[2] ?? '';
+            }
 
-    /**
-     * @return array<string, int>
-     */
-    private function baseCounts(string $phase): array
-    {
-        $bytes = count_chars($phase, 1);
-        $counts = [];
+            foreach ($phases as $phase => $bases) {
+                $bytes = count_chars($bases, 1);
 
-        foreach (self::BASES as $base) {
-            $counts[$base] = $bytes[\ord($base)] ?? 0;
+                foreach (self::BASES as $base) {
+                    $counts[$phase][$base] += $bytes[\ord($base)] ?? 0;
+                }
+            }
         }
 
         return $counts;

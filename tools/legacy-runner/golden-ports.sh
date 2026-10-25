@@ -5,7 +5,7 @@
 # e slice (create_slices con 3 e 10 slice). Inoltre: riscrittura con Bio::SeqIO di format_cases.fasta, faSomeRecords di
 # example_subset_ids.txt su example_transcriptome.fasta, la tabella del codice genetico 1 di dna2pep e dna2pep
 # sui casi limite di orf_cases.fasta; l'ORF scelto da CPC2 (FindCDS) sui set e, con l'output completo di CPC2, sui
-# casi limite di cpc2_orf_cases.fasta; la traduzione Biopython di tutti i codoni IUPAC. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
+# casi limite di cpc2_orf_cases.fasta; la traduzione Biopython di tutti i codoni IUPAC e il punto isoelettrico di isoelectric_cases.tsv; svm-predict su un modello minimo. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
 #
 #   tools/legacy-runner/golden-ports.sh
 set -euo pipefail
@@ -50,6 +50,9 @@ export LEGACY_RUNNER_OUT="$golden_dir/cpc2_cases"
 "$runner" cpc2 tests/Fixtures/fasta/cpc2_orf_cases.fasta /out/cpc2.tsv 2>/dev/null
 mv "$golden_dir/cpc2_cases/cpc2.tsv.scaled" "$golden_dir/cpc2_cases/cpc2_scaled.svm"
 "$runner" cpc2codons /out/codons.tsv
+"$runner" isoelectric tests/Fixtures/peptides/isoelectric_cases.tsv /out/isoelectric.tsv
+mkdir -p "$golden_dir/libsvm"
+LEGACY_RUNNER_OUT="$golden_dir/libsvm" "$runner" svmpredict tests/Fixtures/libsvm/tiny.svm tests/Fixtures/libsvm/tiny.model /out/tiny.predictions
 for mode in none strict any; do
     LEGACY_RUNNER_OUT="$golden_dir/orf_cases" "$runner" dna2pep tests/Fixtures/fasta/orf_cases.fasta "$mode" "/out/dna2pep_$mode.tab"
 done
@@ -59,7 +62,7 @@ LEGACY_RUNNER_OUT="$golden_dir/subset" "$runner" fasomerecords tests/Fixtures/fa
     tests/Fixtures/fasta/example_subset_ids.txt /out/example_subset.fasta
 
 # Checksum degli input e degli output: un golden rigenerato deve risultare identico.
-(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta \
-    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
+(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta peptides/isoelectric_cases.tsv libsvm/tiny.model libsvm/tiny.svm \
+    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/cpc2_cases/isoelectric.tsv golden/libsvm/tiny.predictions golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
     golden/*/slices_*.tsv golden/format/bioperl_rewrite.fasta golden/subset/example_subset.fasta golden/genetic_code/table_1.tsv golden/translation/codons.tsv golden/*/translation/sequences.tsv golden/orf_cases/*.tab) > "$golden_dir/SHA256SUMS"
 echo "Golden written to $golden_dir"

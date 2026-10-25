@@ -17,6 +17,10 @@ Usage:
   legacy-runner cpc2codons <out>                 traduzione Biopython (Seq.translate, codice 1, come mRNA_translate di CPC2)
                                                  di tutti i codoni su ACGTRYMKWSBDHVNX-: "codone<TAB>aa", "!" se Biopython
                                                  solleva TranslationError
+  legacy-runner isoelectric <peptides> <out>     punto isoelettrico di Biopython come lo calcola CPC2
+                                                 (ProtParam.ProteinAnalysis(p).isoelectric_point()) per ogni riga
+                                                 "nome<TAB>peptide": "nome<TAB>repr<TAB>str"
+  legacy-runner svmpredict <input> <model> <out> svm-predict -b 1 di libsvm 3.18 (quello di CPC2)
   legacy-runner composition <fasta> <out>        extractPercentages di LIB/output_and_stats.pm: <out> per
                                                  sequenza (ATGC_Percentages.txt) e <out>.averages (medie)
   legacy-runner slices <fasta> <n> <out>         create_slices di LIB/fasta_management.pm con n slice; <out> =
@@ -121,6 +125,23 @@ with open(sys.argv[1], "w") as handle:
             amino_acid = "!"
         handle.write(codon + "\t" + amino_acid + "\n")
 PYTHON
+        ;;
+    isoelectric)
+        [[ $# -eq 2 ]] || usage
+        python -B - "$1" "$2" <<'PYTHON'
+import sys
+from Bio.SeqUtils import ProtParam
+
+with open(sys.argv[1]) as source, open(sys.argv[2], "w") as handle:
+    for line in source:
+        name, peptide = line.rstrip("\n").split("\t")
+        pi = ProtParam.ProteinAnalysis(peptide).isoelectric_point()
+        handle.write("\t".join([name, repr(pi), str(pi)]) + "\n")
+PYTHON
+        ;;
+    svmpredict)
+        [[ $# -eq 3 ]] || usage
+        "$CPC_HOME/libs/libsvm/libsvm-3.18/svm-predict" -b 1 "$1" "$2" "$3" > /dev/null
         ;;
     composition)
         [[ $# -eq 2 ]] || usage

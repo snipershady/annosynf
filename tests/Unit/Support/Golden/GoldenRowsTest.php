@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Support\Golden;
 
 use App\Tests\Support\Golden\AtgcRow;
 use App\Tests\Support\Golden\CodonRow;
+use App\Tests\Support\Golden\Cpc2OutputComparison;
 use App\Tests\Support\Golden\Cpc2Row;
 use App\Tests\Support\Golden\CpcOrfRow;
 use App\Tests\Support\Golden\Dna2PepRow;
+use App\Tests\Support\Golden\GoldenComparison;
 use App\Tests\Support\Golden\ScaledVector;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -117,6 +119,19 @@ final class GoldenRowsTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
 
         CpcOrfRow::fromLine($line);
+    }
+
+    public function testCpc2LinesDifferOnlyByTheTolerancePermittedOnTheProbability(): void
+    {
+        $expected = "synthetic_9318\t2687\t94\t0.28519\t9.61785888672\t1\t0.0730131\tnoncoding";
+        $comparison = new GoldenComparison();
+
+        Cpc2OutputComparison::compare($comparison, $expected, "synthetic_9318\t2687\t94\t0.28519\t9.61785888672\t1\t0.0730132\tnoncoding");
+        self::assertSame([], $comparison->failures(), 'the last printed digit of the probability');
+
+        Cpc2OutputComparison::compare($comparison, $expected, "synthetic_9318\t2687\t94\t0.28519\t9.61785888672\t1\t0.0730151\tnoncoding");
+        Cpc2OutputComparison::compare($comparison, $expected, "synthetic_9318\t2687\t94\t0.28519\t9.6178588867\t1\t0.0730131\tnoncoding");
+        self::assertCount(2, $comparison->failures(), 'a larger difference, or any difference in another column');
     }
 
     public function testACodonLineKeepsTheTranslation(): void

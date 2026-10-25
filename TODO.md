@@ -204,21 +204,45 @@ intermedi di 0.2.
   nella lunghezza; sotto le 2 basi 0 (CPC2 stampa `0`, intero). Golden identico, confrontato con le 12 cifre
   significative di Python 2, su trial, example e casi limite (aggiunti a `cpc2_orf_cases.fasta`: una base,
   molte N, omopolimero, codoni GC; ora 23 casi).
-- [ ] **3.4 `IsoelectricPoint`**: algoritmo di `Bio.SeqUtils.IsoelectricPoint` di Biopython 1.76 (pK,
+- [x] **3.4 `IsoelectricPoint`**: algoritmo di `Bio.SeqUtils.IsoelectricPoint` di Biopython 1.76 (pK,
   pK terminali dipendenti dal residuo, bisezione con la stessa tolleranza); peptide privato di
-  `X|B|Z|J|U` e `*`; 0.0 e integrity −1 se vuoto.
-- [ ] **3.5 libsvm in PHP**: `LibsvmModel` (parser di `cpc2.model`: `svm_type`, `gamma`, `rho`, `label`,
+  `X|B|Z|J|U` e `*`; 0.0 e integrity −1 se vuoto. Somme delle cariche nell'ordine dei dict di Python 2 (H, K,
+  R, N-terminale; Y, C-terminale, C, E, D). Golden esatto (repr) su 80 peptidi (`peptides/isoelectric_cases.tsv`,
+  comando `isoelectric`) e sui peptidi degli ORF di CPC2. Nel contesto di CPC2 il peptide inizia sempre con M,
+  quindi il pK N-terminale è sempre 7.0.
+- [x] **3.5 libsvm in PHP**: `LibsvmModel` (parser di `cpc2.model`: `svm_type`, `gamma`, `rho`, `label`,
   `probA`/`probB`, vettori di supporto), `LibsvmScaler` (`cpc2.range`, come `svm-scale -r`),
   `LibsvmPredictor` (kernel RBF, decision value, `sigmoid_predict` di Platt, ordine delle label).
-- [ ] **3.6 Composizione `Cpc2Predictor`** + **golden**: `peptide_length`, `ORF_integrity`, `label`
-  identici; Fickett, pI, `coding_probability` con tolleranza 1e-6. Casi da rispettare: le feature si scalano
-  dopo l'arrotondamento di `str()` di Python 2 (12 cifre significative); `svm-scale` omette le feature scalate
-  a 0; l'etichetta si decide sulla probabilità **non arrotondata** (`Transcript_135` di `example`: stampata
-  `0.5` con `%g`, etichetta `coding`). Il Fickett sotto le 2 basi è l'intero `0` (stampato `0`, non `0.0`).
-  Stranezza del modello da replicare: `single_base` (una base, nessun ORF) esce `coding` con probabilità
-  0.999.
-- [ ] **3.7 Benchmark** su `example` (250 sequenze) e su un FASTA grande sintetico: tempo e memoria
-  annotati qui (decide la dimensione dei chunk della fase 7).
+  Anche con 2 classi libsvm passa per `multiclass_probability` (iterativo, si ferma a errore < 0.0025):
+  portato tale e quale. Golden: modello minimo `libsvm/tiny.model` con `svm-predict` reale (comando
+  `svmpredict`), scaling e probabilità sui vettori di `cpc2_scaled.svm`.
+- [x] **3.6 Composizione `Cpc2Predictor`** + **golden**: `peptide_length`, `ORF_integrity`, `label`
+  identici; Fickett, pI, `coding_probability` con tolleranza 1e-6. Riprodotti gli arrotondamenti del passaggio
+  su file (12 cifre prima di svm-scale, `%g` dopo), il Fickett intero `0` sotto le 2 basi, `single_base`
+  coding, `Transcript_135` coding. `Cpc2OutputFormatter` scrive l'output di CPC2 (`%g` di C e `str()` di
+  Python in `LegacyNumberFormat`). Porta `CodingPotentialPredictor` + `NativeCpc2Predictor` (modello da
+  `resources/cpc2`, caricato una volta), caso d'uso `PredictCodingPotential`, comando `annosynf:cpc2:predict`.
+  Output identico byte per byte su trial, example e casi limite; i test confrontano byte per byte tutte le
+  colonne tranne `coding_probability` (tolleranza 1e-6, vedi 3.7).
+- [x] **3.7 Benchmark** su `example` (250 sequenze) e su un FASTA grande sintetico: tempo e memoria
+  annotati qui (decide la dimensione dei chunk della fase 7). PHP 8.5 senza Xdebug, 1 core:
+
+  | Input | Sequenze | Basi | Tempo | ms/seq | Memoria di picco |
+  |---|---|---|---|---|---|
+  | example | 250 | 0.6 Mb | 0.12 s | 0.46 | 8 MB |
+  | sintetico (200–3000 nt) | 20 000 | 32 Mb | 8.7 s | 0.44 | 6 MB |
+  | 3 sequenze da 0.1, 1 e 5 Mb | 3 | 6.1 Mb | 0.22 s | — | 27 MB |
+
+  Caricamento del modello 5 ms. CPC2 originale nel container sullo stesso sintetico: 8.7 s; il tempo del port
+  è dominato dal kernel (3111 vettori di supporto per sequenza), costante per sequenza: ~0.45 ms anche su
+  milioni di trascritti (≈ 7.5 min per 1 M sequenze su un core). Memoria costante in streaming; per sequenza
+  ~5× la sua lunghezza (il Fickett conta le fasi a blocchi di 48 kb, prima ~23×). Conseguenza per la fase 7:
+  il passo CPC2 non richiede chunk propri; si possono usare gli stessi chunk di trascritti di dna2pep
+  (anche 10 000–50 000 sequenze per messaggio restano sotto i 30 s).
+  Sul sintetico l'output coincide con CPC2 salvo 1 riga su 20 000: ultima cifra di `coding_probability`
+  (0.0730131 contro 0.0730132). Causa verificata nel container: exp() della libm di glibc 2.28 e 2.41
+  differisce nell'ultimo bit e, con 3111 termini e coefficienti fino a 16284, sposta l'ottava cifra; non è
+  replicabile né rilevante (tolleranza 1e-6 di §B.8.2).
 
 ## Fase 4 — Parser dei dati di riferimento (M2) · elimina `fgrep`/`sed`/`cut`/`sort`/`uniq`
 
@@ -323,7 +347,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ## Prossimo passo consigliato
 
-Fasi 0–2 completate (salvo la decisione 0.6), fase 3 in corso. Prossimo: 3.4 (`IsoelectricPoint`); la fase 3
-chiude M1. Le
+Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
+Prossimo: fase 4 (parser dei dati di riferimento, M2). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

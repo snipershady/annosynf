@@ -18,3 +18,11 @@ annosynf è una riscrittura in PHP, modificata, delle opere seguenti.
 - **CPC2-beta** (Coding Potential Calculator 2), Center for Bioinformatics, Peking University. Port nativo
   del calcolo del potenziale codificante (`src/Domain/CodingPotential`) e modello SVM in `resources/cpc2/`.
   La licenza del modello è da verificare prima di distribuire il software.
+- **LIBSVM 3.18** — Copyright (c) 2000-2014 Chih-Chung Chang e Chih-Jen Lin. Licenza BSD a 3 clausole
+  (compatibile con GPL-3). Port della predizione con probabilità (`svm-scale -r`, kernel RBF, sigmoide di
+  Platt, `multiclass_probability`) in `src/Domain/CodingPotential/Libsvm*`.
+- **Biopython 1.76** — Copyright dei contributori di Biopython. Biopython License Agreement (permissiva,
+  compatibile con GPL-3). Port del punto isoelettrico (`Bio.SeqUtils.IsoelectricPoint`, metodo di Bjellqvist)
+  e della traduzione con la tabella dei codoni ambigui (`Seq.translate`) in `src/Domain/CodingPotential`.
+- **CPAT 1.2.1** — Liguo Wang et al. GNU GPL versione 2 o successiva. Tabelle del punteggio di Fickett e
+  ricerca dell'ORF, tramite CPC2.

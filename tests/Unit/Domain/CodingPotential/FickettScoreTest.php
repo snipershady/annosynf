@@ -34,6 +34,13 @@ final class FickettScoreTest extends TestCase
         self::assertSame('0.36163', $this->python(new FickettScore()->of('ccauggcuuuuaagg')));
     }
 
+    public function testSequencesLongerThanABlock(): void
+    {
+        // Valori di Fickett.fickett_value di CPC2 (repr), calcolati nel container legacy-runner.
+        self::assertSame(0.29268000000000005, new FickettScore()->of(str_repeat('ACGTTGCAAGT', 10000) . 'GGA'));
+        self::assertSame(0.24471, new FickettScore()->of(str_repeat('AAAC', 30000)));
+    }
+
     public function testShortSequences(): void
     {
         self::assertSame('0.22328', $this->python(new FickettScore()->of('AT')), 'two bases are enough');
