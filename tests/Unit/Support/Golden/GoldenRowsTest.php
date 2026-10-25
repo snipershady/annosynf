@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Support\Golden;
 
 use App\Tests\Support\Golden\AtgcRow;
+use App\Tests\Support\Golden\CodonRow;
 use App\Tests\Support\Golden\Cpc2Row;
 use App\Tests\Support\Golden\CpcOrfRow;
 use App\Tests\Support\Golden\Dna2PepRow;
@@ -116,6 +117,30 @@ final class GoldenRowsTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
 
         CpcOrfRow::fromLine($line);
+    }
+
+    public function testACodonLineKeepsTheTranslation(): void
+    {
+        self::assertSame(['TAR', '*'], [CodonRow::fromLine("TAR\t*")->codon, CodonRow::fromLine("TAR\t*")->aminoAcid]);
+        self::assertSame(CodonRow::ERROR, CodonRow::fromLine("AT-\t!")->aminoAcid);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function malformedCodonLines(): iterable
+    {
+        yield 'two bases' => ["AT\tM"];
+        yield 'lowercase' => ["atg\tM"];
+        yield 'no translation' => ["ATG\t"];
+    }
+
+    #[DataProvider('malformedCodonLines')]
+    public function testMalformedCodonLinesAreRejected(string $line): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+
+        CodonRow::fromLine($line);
     }
 
     public function testAScaledVectorKeepsTheFeatureIndexes(): void

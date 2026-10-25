@@ -14,6 +14,9 @@ Usage:
   legacy-runner cpc2orf <fasta> <out>            ORF scelto da FindCDS di CPC2 (solo strand +) e sua traduzione
                                                  Biopython: "id<TAB>inizio 0-based<TAB>integrity<TAB>ORF<TAB>peptide"
                                                  (integrity grezza di FindCDS: 0 se non c'è ORF)
+  legacy-runner cpc2codons <out>                 traduzione Biopython (Seq.translate, codice 1, come mRNA_translate di CPC2)
+                                                 di tutti i codoni su ACGTRYMKWSBDHVNX-: "codone<TAB>aa", "!" se Biopython
+                                                 solleva TranslationError
   legacy-runner composition <fasta> <out>        extractPercentages di LIB/output_and_stats.pm: <out> per
                                                  sequenza (ATGC_Percentages.txt) e <out>.averages (medie)
   legacy-runner slices <fasta> <n> <out>         create_slices di LIB/fasta_management.pm con n slice; <out> =
@@ -99,6 +102,25 @@ with open(out, "w") as handle:
         handle.write("\t".join([seq.id, str(start), str(integrity), cds, str(CPC2.mRNA_translate(cds))]) + "\n")
 PYTHON
         rm -rf "$work"
+        ;;
+    cpc2codons)
+        [[ $# -eq 1 ]] || usage
+        python -B - "$1" <<'PYTHON'
+import itertools
+import sys
+sys.path.insert(0, "/opt/CPC2-beta/bin")
+import CPC2
+from Bio.Data.CodonTable import TranslationError
+
+with open(sys.argv[1], "w") as handle:
+    for letters in itertools.product("ACGTRYMKWSBDHVNX-", repeat=3):
+        codon = "".join(letters)
+        try:
+            amino_acid = str(CPC2.mRNA_translate(codon))
+        except TranslationError:
+            amino_acid = "!"
+        handle.write(codon + "\t" + amino_acid + "\n")
+PYTHON
         ;;
     composition)
         [[ $# -eq 2 ]] || usage

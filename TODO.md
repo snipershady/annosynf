@@ -191,10 +191,14 @@ intermedi di 0.2.
   `cpc2orf` del legacy-runner (FindCDS + traduzione Biopython del modulo originale), fixture
   `cpc2_orf_cases.fasta` (19 casi) e golden `<set>/cpc2_orf.tsv`, `cpc2_cases/{cpc2_orf.tsv,cpc2.tsv,cpc2_scaled.svm}`;
   rigenerando tutti i golden quelli esistenti sono rimasti identici. Parità su trial, example e casi limite.
-- [ ] **3.2 Lunghezza del peptide** come la traduzione Biopython (incluso il `*` finale). I golden
-  `cpc2_orf.tsv` hanno anche il peptide (codoni IUPAC: `NNN`, `RAA`, `KMS` → `X`). Caso da decidere: un codone
-  di gap (`---`) nell'ORF fa fallire Biopython (`TranslationError`) e CPC2 si interrompe senza output per
-  l'intero file; il validatore (§B.6) ammette `-` tra i caratteri nucleotidici legacy.
+- [x] **3.2 Lunghezza del peptide** come la traduzione Biopython (incluso il `*` finale).
+  `Cpc2Translator` porta `Seq.translate()` di Biopython 1.76 (tabella ambigua del codice 1): un carattere per
+  codone completo; espansione IUPAC (X = qualunque base): solo stop → `*`, stop e amminoacidi → `X`, un solo
+  amminoacido → quello, altrimenti B (D/N), Z (E/Q), J (I/L) o X. peptide_length = numero di codoni dell'ORF.
+  Golden `cpc2_cases/codons.tsv` (comando `cpc2codons`: 4913 codoni su `ACGTRYMKWSBDHVNX-`) e peptidi di
+  `cpc2_orf.tsv`: identici. **Correzione** (§A.12.20): dove Biopython solleva TranslationError (codoni con `-`,
+  o con X quando potrebbero essere uno stop; 1170 codoni) CPC2 si interrompe senza output per l'intero file;
+  il port scrive `X`. Le lettere servono al punto isoelettrico (3.4).
 - [ ] **3.3 `FickettScore`**: tabelle di posizione/contenuto copiate da `CPC2.py` come costanti citate.
 - [ ] **3.4 `IsoelectricPoint`**: algoritmo di `Bio.SeqUtils.IsoelectricPoint` di Biopython 1.76 (pK,
   pK terminali dipendenti dal residuo, bisezione con la stessa tolleranza); peptide privato di
@@ -313,6 +317,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ## Prossimo passo consigliato
 
-Fasi 0–2 completate (salvo la decisione 0.6). Prossimo: fase 3 (port di CPC2, da 3.1), che chiude M1. Le
+Fasi 0–2 completate (salvo la decisione 0.6), fase 3 in corso. Prossimo: 3.3 (`FickettScore`); la fase 3
+chiude M1. Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
