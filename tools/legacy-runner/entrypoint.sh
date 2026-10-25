@@ -11,6 +11,9 @@ Usage:
                                                  dna2pep come lo lancia Annocript (-O tab -o <mode> -r all)
   legacy-runner cpc2 <fasta> <out>               CPC2 come lo lancia Annocript, più <out>.scaled (vettori
                                                  delle feature dopo svm-scale, per diagnosticare il port)
+  legacy-runner cpc2orf <fasta> <out>            ORF scelto da FindCDS di CPC2 (solo strand +) e sua traduzione
+                                                 Biopython: "id<TAB>inizio 0-based<TAB>integrity<TAB>ORF<TAB>peptide"
+                                                 (integrity grezza di FindCDS: 0 se non c'è ORF)
   legacy-runner composition <fasta> <out>        extractPercentages di LIB/output_and_stats.pm: <out> per
                                                  sequenza (ATGC_Percentages.txt) e <out>.averages (medie)
   legacy-runner slices <fasta> <n> <out>         create_slices di LIB/fasta_management.pm con n slice; <out> =
@@ -72,6 +75,29 @@ case "$cmd" in
         # Stesso vettore che CPC2 passa a svm-scale (colonne 3..6 dell'output), poi scalato con cpc2.range.
         awk -F'\t' '!/^#/ { print "999 1:" $3 " 2:" $4 " 3:" $5 " 4:" $6 }' "$out" > "$work/features.svm"
         "$CPC_HOME/libs/libsvm/libsvm-3.18/svm-scale" -r "$CPC_HOME/data/cpc2.range" "$work/features.svm" > "$out.scaled"
+        rm -rf "$work"
+        ;;
+    cpc2orf)
+        [[ $# -eq 2 ]] || usage
+        fasta="$1" out="$2"
+        work="$(mktemp -d)"
+        clean_header "$fasta" "$work/cleanh.fasta"
+        # Stessa preparazione di calculate_potential (strip, U -> T, maiuscole), poi FindCDS e mRNA_translate
+        # del modulo originale; -B: niente .pyc nell'immagine.
+        python -B - "$work/cleanh.fasta" "$out" <<'PYTHON'
+import re
+import sys
+sys.path.insert(0, "/opt/CPC2-beta/bin")
+import CPC2
+import seqio
+
+fasta, out = sys.argv[1], sys.argv[2]
+with open(out, "w") as handle:
+    for seq in seqio.fasta_read(fasta):
+        rna = re.sub("U", "T", str(seq.seq).strip(), flags=re.I).upper()
+        cds, start, strand, integrity = CPC2.FindCDS(rna).longest_orf("+")
+        handle.write("\t".join([seq.id, str(start), str(integrity), cds, str(CPC2.mRNA_translate(cds))]) + "\n")
+PYTHON
         rm -rf "$work"
         ;;
     composition)

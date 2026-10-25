@@ -183,9 +183,18 @@ Riferimento riga per riga: `docs/legacy/ports/{dna2pep,mod_translate,ncbi_geneti
 Riferimento: `docs/legacy/ports/CPC2.py`, `resources/cpc2/`, §A.8.2. Sviluppare confrontando i file
 intermedi di 0.2.
 
-- [ ] **3.1 `CpcOrfFinder`**: solo strand `+`, `ATG` → stop incluso oppure fine sequenza (integrity −1),
-  il più lungo, pareggio → il più a monte.
-- [ ] **3.2 Lunghezza del peptide** come la traduzione Biopython (incluso il `*` finale).
+- [x] **3.1 `CpcOrfFinder`**: solo strand `+`, `ATG` → stop incluso oppure fine sequenza (integrity −1),
+  il più lungo, pareggio → il più a monte. `src/Domain/CodingPotential/{CpcOrfFinder,CpcOrf,OrfIntegrity}`.
+  Dettagli di FindCDS verificati nel container: senza stop l'ORF finisce all'ultimo codone completo; la
+  ricerca riprende dopo la fine dell'ORF (un ATG interno non apre un altro ORF); il pareggio va al più a monte
+  anche se in un frame successivo; senza ATG nessun ORF (CPC2 scrive poi integrity −1). Nuovo comando
+  `cpc2orf` del legacy-runner (FindCDS + traduzione Biopython del modulo originale), fixture
+  `cpc2_orf_cases.fasta` (19 casi) e golden `<set>/cpc2_orf.tsv`, `cpc2_cases/{cpc2_orf.tsv,cpc2.tsv,cpc2_scaled.svm}`;
+  rigenerando tutti i golden quelli esistenti sono rimasti identici. Parità su trial, example e casi limite.
+- [ ] **3.2 Lunghezza del peptide** come la traduzione Biopython (incluso il `*` finale). I golden
+  `cpc2_orf.tsv` hanno anche il peptide (codoni IUPAC: `NNN`, `RAA`, `KMS` → `X`). Caso da decidere: un codone
+  di gap (`---`) nell'ORF fa fallire Biopython (`TranslationError`) e CPC2 si interrompe senza output per
+  l'intero file; il validatore (§B.6) ammette `-` tra i caratteri nucleotidici legacy.
 - [ ] **3.3 `FickettScore`**: tabelle di posizione/contenuto copiate da `CPC2.py` come costanti citate.
 - [ ] **3.4 `IsoelectricPoint`**: algoritmo di `Bio.SeqUtils.IsoelectricPoint` di Biopython 1.76 (pK,
   pK terminali dipendenti dal residuo, bisezione con la stessa tolleranza); peptide privato di

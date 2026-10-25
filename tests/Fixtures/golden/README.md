@@ -2,7 +2,7 @@
 
 Output dei programmi esterni e di alcune funzioni di Annocript 2.0.1 sui FASTA di `tests/Fixtures/fasta/`, prodotti **una volta**
 dal container `legacy-runner` (TODO.md step 0.2). Sono il riferimento dei test di parità dei port PHP:
-`OrfFinder` contro dna2pep (step 2.5), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
+`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
 `extractPercentages` (step 1.4), `FastaFormatter`/`FastaSlicer`/`FastaSubset` contro Bio::SeqIO, `create_slices`
 e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` e `Dna2PepLineFormatter` contro dna2pep, campo per campo e byte per byte (step 2.3–2.5). Dopo la fase 11 restano come
 dati di regressione congelati: nessun test li rigenera né richiede il container.
@@ -13,6 +13,8 @@ dati di regressione congelati: nessun test li rigenera né richiede il container
 |---|---|---|
 | `<set>/dna2pep_none.tab`, `dna2pep_strict.tab`, `dna2pep_any.tab` | dna2pep 1.1, una modalità per file | una per sequenza |
 | `<set>/cpc2.tsv` | CPC2-beta, output completo con intestazione | intestazione + una per sequenza |
+| `<set>/cpc2_orf.tsv` | ORF scelto da `FindCDS` di CPC2 e sua traduzione Biopython (comando `cpc2orf`): `id, inizio 0-based, integrity (0 = nessun ORF), ORF, peptide` | una per sequenza |
+| `cpc2_cases/cpc2_orf.tsv`, `cpc2.tsv`, `cpc2_scaled.svm` | gli stessi file di CPC2 sui casi limite di `fasta/cpc2_orf_cases.fasta` (pareggi tra frame, ATG interni, ORF senza stop, IUPAC, minuscole e U, nessun ATG) | una per sequenza |
 | `<set>/cpc2_scaled.svm` | vettori delle feature di CPC2 dopo `svm-scale -r cpc2.range` | una per sequenza |
 | `<set>/atgc_percentages.tsv` | `extractPercentages` di `LIB/output_and_stats.pm` (il file `ATGC_Percentages.txt`) | intestazione + una per sequenza |
 | `<set>/atgc_percentages.tsv.averages` | le medie restituite dalla stessa funzione (A, G, T, C, N, GC complessivo) | intestazione + una |
@@ -57,7 +59,7 @@ randomizza l'hash, quindi anche l'ordine di visita dei frame di dna2pep, che dec
 
 | Componente | Versione / checksum |
 |---|---|
-| Immagine | `annosynf/legacy-runner:2.0.1`, `sha256:17f790259c9138a6c4c7f457951b93ffc86cca2c37b7659bf890e80ccc9cde6c` (base `python:2.7.18-slim-buster`) |
+| Immagine | `annosynf/legacy-runner:2.0.1`, `sha256:ff57d91952476029a1c996e7b9c2d943bafbfdda34d408d391670b50925a549f` (base `python:2.7.18-slim-buster`) |
 | Python / numpy / Biopython | 2.7.18 / 1.16.6 / 1.76 |
 | dna2pep | 1.1, `dna2pep-1.1.tar.gz` sha256 `62ee2217b086163b7f413f29835e4a972084c0d3b438a33176fb6adf789ece21` |
 | CPC2 | beta, `CPC2-beta.tar.gz` sha256 `1df1ef723159055d26ff41de8f9ac84df8bcb097eea264cb4b1d1c53d9aa8bcf` |

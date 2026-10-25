@@ -1,0 +1,19 @@
+atg_to_stop	3	1	ATGAAACCCTAA	MKP*
+immediate_stop	0	1	ATGTAA	M*
+runs_to_the_end	0	-1	ATGAAACCC	MKP
+atg_is_the_last_codon	3	-1	ATG	M
+atg_then_partial_codon	3	-1	ATG	M
+nested_atg	0	1	ATGATGAAATAG	MMK*
+stops_tag_tga	5	1	ATGACCATGTAG	MTM*
+tie_upstream_in_a_later_frame	1	1	ATGAAATAA	MK*
+tie_first_frame_upstream	0	1	ATGAAATAA	MK*
+longest_in_frame_3	2	1	ATGAAACCCGGGTAA	MKPG*
+longer_after_shorter	6	1	ATGAAACCCTAG	MKP*
+no_atg	0	0		
+only_stops	0	0		
+reverse_strand_only	11	-1	ATG	M
+lowercase_and_uracil	2	-1	ATGGCTTTTAAG	MAFK
+ambiguous_codons	0	1	ATGNNNRAAKMSTAG	MXXX*
+ambiguous_start_is_not_a_start	0	0		
+shorter_than_a_codon	0	0		
+orf_after_unfinished_orf	0	-1	ATGAAATTTATGCCC	MKFMP

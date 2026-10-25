@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Support\Golden;
 
 use App\Tests\Support\Golden\AtgcRow;
 use App\Tests\Support\Golden\Cpc2Row;
+use App\Tests\Support\Golden\CpcOrfRow;
 use App\Tests\Support\Golden\Dna2PepRow;
 use App\Tests\Support\Golden\ScaledVector;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -87,6 +88,34 @@ final class GoldenRowsTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
 
         Cpc2Row::fromLine($line);
+    }
+
+    public function testACpcOrfLineKeepsEveryColumn(): void
+    {
+        $row = CpcOrfRow::fromLine("atg_to_stop\t3\t1\tATGAAACCCTAA\tMKP*");
+
+        self::assertSame(['atg_to_stop', 3, 1, 'ATGAAACCCTAA', 'MKP*'], [$row->id, $row->start, $row->integrity, $row->dna, $row->peptide]);
+        self::assertSame(0, CpcOrfRow::fromLine("no_atg\t0\t0\t\t")->integrity, 'no ORF');
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function malformedCpcOrfLines(): iterable
+    {
+        yield 'four fields' => ["id\t0\t1\tATGTAA"];
+        yield 'negative start' => ["id\t-1\t1\tATGTAA\tM*"];
+        yield 'bad integrity' => ["id\t0\t2\tATGTAA\tM*"];
+        yield 'lowercase dna' => ["id\t0\t1\tatgtaa\tM*"];
+        yield 'bad peptide' => ["id\t0\t1\tATGTAA\tM-"];
+    }
+
+    #[DataProvider('malformedCpcOrfLines')]
+    public function testMalformedCpcOrfLinesAreRejected(string $line): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+
+        CpcOrfRow::fromLine($line);
     }
 
     public function testAScaledVectorKeepsTheFeatureIndexes(): void

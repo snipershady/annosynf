@@ -24,6 +24,9 @@ final class GoldenFixtures
         'trial' => 'fasta/trial_transcriptome.fasta',
     ];
 
+    /** Casi limite dell'ORF di CPC2: golden in golden/cpc2_cases. */
+    public const string CPC2_CASES = 'fasta/cpc2_orf_cases.fasta';
+
     /**
      * @throws LogicException se il file non esiste
      */
@@ -85,9 +88,19 @@ final class GoldenFixtures
      */
     public static function sequenceIds(string $set): array
     {
+        return self::fastaIds(self::fasta($set));
+    }
+
+    /**
+     * Come {@see self::sequenceIds()}, per un FASTA qualunque dei fixture.
+     *
+     * @return list<string>
+     */
+    public static function fastaIds(string $relative): array
+    {
         $ids = [];
 
-        foreach (self::lines(self::fasta($set)) as $line) {
+        foreach (self::lines($relative) as $line) {
             if (str_starts_with($line, '>')) {
                 $ids[] = preg_split('/\s+/', substr($line, 1), 2)[0] ?? '';
             }

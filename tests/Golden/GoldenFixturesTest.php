@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Golden;
 
 use App\Tests\Support\Golden\Cpc2Row;
+use App\Tests\Support\Golden\CpcOrfRow;
 use App\Tests\Support\Golden\Dna2PepRow;
 use App\Tests\Support\Golden\GoldenFixtures;
 use App\Tests\Support\Golden\ScaledVector;
@@ -26,12 +27,12 @@ final class GoldenFixturesTest extends TestCase
         $checksums = GoldenFixtures::checksums();
 
         foreach (GoldenFixtures::SETS as $set => $fasta) {
-            foreach ([$fasta, ...array_map(static fn (string $file): string => \sprintf('golden/%s/%s', $set, $file), ['dna2pep_none.tab', 'dna2pep_strict.tab', 'dna2pep_any.tab', 'cpc2.tsv', 'cpc2_scaled.svm', 'atgc_percentages.tsv', 'atgc_percentages.tsv.averages', 'slices_3.tsv', 'slices_10.tsv'])] as $relative) {
+            foreach ([$fasta, ...array_map(static fn (string $file): string => \sprintf('golden/%s/%s', $set, $file), ['dna2pep_none.tab', 'dna2pep_strict.tab', 'dna2pep_any.tab', 'cpc2.tsv', 'cpc2_scaled.svm', 'cpc2_orf.tsv', 'atgc_percentages.tsv', 'atgc_percentages.tsv.averages', 'slices_3.tsv', 'slices_10.tsv'])] as $relative) {
                 self::assertArrayHasKey($relative, $checksums, 'every golden file is listed in SHA256SUMS');
             }
         }
 
-        foreach (['fasta/format_cases.fasta', 'fasta/example_subset_ids.txt', 'golden/format/bioperl_rewrite.fasta', 'golden/subset/example_subset.fasta', 'golden/genetic_code/table_1.tsv', 'golden/translation/codons.tsv', 'golden/trial/translation/sequences.tsv', 'golden/example/translation/sequences.tsv', 'fasta/orf_cases.fasta', 'golden/orf_cases/dna2pep_none.tab', 'golden/orf_cases/dna2pep_strict.tab', 'golden/orf_cases/dna2pep_any.tab'] as $relative) {
+        foreach (['fasta/format_cases.fasta', 'fasta/example_subset_ids.txt', 'golden/format/bioperl_rewrite.fasta', 'golden/subset/example_subset.fasta', 'golden/genetic_code/table_1.tsv', 'golden/translation/codons.tsv', 'golden/trial/translation/sequences.tsv', 'golden/example/translation/sequences.tsv', 'fasta/orf_cases.fasta', 'golden/orf_cases/dna2pep_none.tab', 'golden/orf_cases/dna2pep_strict.tab', 'golden/orf_cases/dna2pep_any.tab', GoldenFixtures::CPC2_CASES, 'golden/cpc2_cases/cpc2_orf.tsv', 'golden/cpc2_cases/cpc2.tsv', 'golden/cpc2_cases/cpc2_scaled.svm'] as $relative) {
             self::assertArrayHasKey($relative, $checksums, 'every golden file is listed in SHA256SUMS');
         }
 
@@ -121,5 +122,37 @@ final class GoldenFixturesTest extends TestCase
         }
 
         self::assertCount($count, GoldenFixtures::sequenceIds($set));
+    }
+
+    /**
+     * @return Generator<string, array{string, string}>
+     */
+    public static function cpc2OrfFiles(): Generator
+    {
+        foreach (GoldenFixtures::SETS as $set => $fasta) {
+            yield $set => [$set, $fasta];
+        }
+
+        yield 'cpc2_cases' => ['cpc2_cases', GoldenFixtures::CPC2_CASES];
+    }
+
+    #[DataProvider('cpc2OrfFiles')]
+    public function testTheCpc2OrfIsTheOneBehindTheCpc2Output(string $directory, string $fasta): void
+    {
+        $orfs = array_map(CpcOrfRow::fromLine(...), iterator_to_array(GoldenFixtures::lines(\sprintf('golden/%s/cpc2_orf.tsv', $directory)), false));
+        $lines = iterator_to_array(GoldenFixtures::lines(\sprintf('golden/%s/cpc2.tsv', $directory)), false);
+        array_shift($lines);
+        $predictions = array_map(Cpc2Row::fromLine(...), $lines);
+
+        self::assertSame(GoldenFixtures::fastaIds($fasta), array_map(static fn (CpcOrfRow $row): string => $row->id, $orfs));
+        self::assertCount(\count($orfs), $predictions);
+
+        foreach ($orfs as $index => $orf) {
+            self::assertSame(0, \strlen($orf->dna) % 3, $orf->id . ': whole codons');
+            self::assertSame(\strlen($orf->dna) / 3, \strlen($orf->peptide), $orf->id . ': one amino acid per codon');
+            self::assertSame($orf->dna === '', $orf->integrity === 0, $orf->id . ': integrity 0 only without ORF');
+            self::assertSame($predictions[$index]->peptideLength, \strlen($orf->peptide), $orf->id . ': peptide_length of CPC2');
+            self::assertSame($orf->integrity === 0 ? -1 : $orf->integrity, $predictions[$index]->orfIntegrity, $orf->id . ': ORF_integrity of CPC2');
+        }
     }
 }
