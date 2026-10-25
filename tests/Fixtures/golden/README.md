@@ -2,7 +2,7 @@
 
 Output dei programmi esterni e di alcune funzioni di Annocript 2.0.1 sui FASTA di `tests/Fixtures/fasta/`, prodotti **una volta**
 dal container `legacy-runner` (TODO.md step 0.2). Sono il riferimento dei test di parità dei port PHP:
-`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
+`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `FickettScore` contro CPC2 (step 3.3), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
 `extractPercentages` (step 1.4), `FastaFormatter`/`FastaSlicer`/`FastaSubset` contro Bio::SeqIO, `create_slices`
 e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` e `Dna2PepLineFormatter` contro dna2pep, campo per campo e byte per byte (step 2.3–2.5). Dopo la fase 11 restano come
 dati di regressione congelati: nessun test li rigenera né richiede il container.
@@ -14,7 +14,7 @@ dati di regressione congelati: nessun test li rigenera né richiede il container
 | `<set>/dna2pep_none.tab`, `dna2pep_strict.tab`, `dna2pep_any.tab` | dna2pep 1.1, una modalità per file | una per sequenza |
 | `<set>/cpc2.tsv` | CPC2-beta, output completo con intestazione | intestazione + una per sequenza |
 | `<set>/cpc2_orf.tsv` | ORF scelto da `FindCDS` di CPC2 e sua traduzione Biopython (comando `cpc2orf`): `id, inizio 0-based, integrity (0 = nessun ORF), ORF, peptide` | una per sequenza |
-| `cpc2_cases/cpc2_orf.tsv`, `cpc2.tsv`, `cpc2_scaled.svm` | gli stessi file di CPC2 sui casi limite di `fasta/cpc2_orf_cases.fasta` (pareggi tra frame, ATG interni, ORF senza stop, IUPAC, minuscole e U, nessun ATG) | una per sequenza |
+| `cpc2_cases/cpc2_orf.tsv`, `cpc2.tsv`, `cpc2_scaled.svm` | gli stessi file di CPC2 sui casi limite di `fasta/cpc2_orf_cases.fasta` (pareggi tra frame, ATG interni, ORF senza stop, IUPAC, minuscole e U, nessun ATG; per il Fickett una base, molte N, omopolimero) | una per sequenza |
 | `cpc2_cases/codons.tsv` | `mRNA_translate` di CPC2 (Biopython 1.76, `Seq.translate()`) per tutti i 4913 codoni su `ACGTRYMKWSBDHVNX-`; `!` dove Biopython solleva TranslationError (comando `cpc2codons`) | 4913 |
 | `<set>/cpc2_scaled.svm` | vettori delle feature di CPC2 dopo `svm-scale -r cpc2.range` | una per sequenza |
 | `<set>/atgc_percentages.tsv` | `extractPercentages` di `LIB/output_and_stats.pm` (il file `ATGC_Percentages.txt`) | intestazione + una per sequenza |

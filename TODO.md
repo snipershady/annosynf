@@ -199,7 +199,11 @@ intermedi di 0.2.
   `cpc2_orf.tsv`: identici. **Correzione** (§A.12.20): dove Biopython solleva TranslationError (codoni con `-`,
   o con X quando potrebbero essere uno stop; 1170 codoni) CPC2 si interrompe senza output per l'intero file;
   il port scrive `X`. Le lettere servono al punto isoelettrico (3.4).
-- [ ] **3.3 `FickettScore`**: tabelle di posizione/contenuto copiate da `CPC2.py` come costanti citate.
+- [x] **3.3 `FickettScore`**: tabelle di posizione/contenuto copiate da `CPC2.py` come costanti citate.
+  Stesse operazioni in virgola mobile e stesso ordine di somma di CPC2; le lettere diverse da ACGT contano solo
+  nella lunghezza; sotto le 2 basi 0 (CPC2 stampa `0`, intero). Golden identico, confrontato con le 12 cifre
+  significative di Python 2, su trial, example e casi limite (aggiunti a `cpc2_orf_cases.fasta`: una base,
+  molte N, omopolimero, codoni GC; ora 23 casi).
 - [ ] **3.4 `IsoelectricPoint`**: algoritmo di `Bio.SeqUtils.IsoelectricPoint` di Biopython 1.76 (pK,
   pK terminali dipendenti dal residuo, bisezione con la stessa tolleranza); peptide privato di
   `X|B|Z|J|U` e `*`; 0.0 e integrity −1 se vuoto.
@@ -210,7 +214,9 @@ intermedi di 0.2.
   identici; Fickett, pI, `coding_probability` con tolleranza 1e-6. Casi da rispettare: le feature si scalano
   dopo l'arrotondamento di `str()` di Python 2 (12 cifre significative); `svm-scale` omette le feature scalate
   a 0; l'etichetta si decide sulla probabilità **non arrotondata** (`Transcript_135` di `example`: stampata
-  `0.5` con `%g`, etichetta `coding`).
+  `0.5` con `%g`, etichetta `coding`). Il Fickett sotto le 2 basi è l'intero `0` (stampato `0`, non `0.0`).
+  Stranezza del modello da replicare: `single_base` (una base, nessun ORF) esce `coding` con probabilità
+  0.999.
 - [ ] **3.7 Benchmark** su `example` (250 sequenze) e su un FASTA grande sintetico: tempo e memoria
   annotati qui (decide la dimensione dei chunk della fase 7).
 
@@ -317,7 +323,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ## Prossimo passo consigliato
 
-Fasi 0–2 completate (salvo la decisione 0.6), fase 3 in corso. Prossimo: 3.3 (`FickettScore`); la fase 3
+Fasi 0–2 completate (salvo la decisione 0.6), fase 3 in corso. Prossimo: 3.4 (`IsoelectricPoint`); la fase 3
 chiude M1. Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

@@ -18,3 +18,7 @@ ambiguous_codons	15	5	0.33716	5.27496337891	1	1.05922e-05	noncoding
 ambiguous_start_is_not_a_start	9	0	0.23538	0.0	-1	0.00308256	noncoding
 shorter_than_a_codon	2	0	0.22328	0.0	-1	0.00589917	noncoding
 orf_after_unfinished_orf	15	5	0.39897	8.50006103516	-1	0.0342667	noncoding
+single_base	1	0	0	0.0	-1	0.999019	coding
+mostly_n	24	0	0.25877	0.0	-1	3.60898e-06	noncoding
+homopolymer	44	0	0.23483	0.0	-1	0.00316999	noncoding
+gc_rich_codons	48	0	0.32167	0.0	-1	4.96753e-07	noncoding

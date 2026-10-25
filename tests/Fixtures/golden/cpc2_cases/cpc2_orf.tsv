@@ -17,3 +17,7 @@ ambiguous_codons	0	1	ATGNNNRAAKMSTAG	MXXX*
 ambiguous_start_is_not_a_start	0	0		
 shorter_than_a_codon	0	0		
 orf_after_unfinished_orf	0	-1	ATGAAATTTATGCCC	MKFMP
+single_base	0	0		
+mostly_n	0	0		
+homopolymer	0	0		
+gc_rich_codons	0	0		
