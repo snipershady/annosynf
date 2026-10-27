@@ -18,8 +18,6 @@ use Generator;
  */
 final readonly class PathwayTxtParser
 {
-    private const string SEPARATOR = '/^-{10,}\s*$/';
-
     /**
      * Versione della release dall'intestazione (`Release:     2026_03 of 02-Sep-2026`), null se assente.
      *
@@ -27,19 +25,7 @@ final readonly class PathwayTxtParser
      */
     public function release(iterable $lines): ?string
     {
-        $separators = 0;
-
-        foreach ($lines as $line) {
-            if (preg_match(self::SEPARATOR, $line) === 1 && ++$separators === 3) {
-                break;
-            }
-
-            if (preg_match('/^Release:\s+(\S+)/', $line, $match) === 1) {
-                return $match[1];
-            }
-        }
-
-        return null;
+        return UniProtDocumentHeader::release($lines);
     }
 
     /**
@@ -58,7 +44,7 @@ final readonly class PathwayTxtParser
         foreach ($lines as $line) {
             ++$number;
             $line = rtrim($line, "\r\n");
-            $separator = preg_match(self::SEPARATOR, $line) === 1;
+            $separator = UniProtDocumentHeader::isSeparator($line);
 
             if ($separator || preg_match('/^[A-Za-z0-9_]/', $line) === 1) {
                 if ($current !== null) {

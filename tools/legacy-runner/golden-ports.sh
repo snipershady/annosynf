@@ -10,7 +10,8 @@
 # tests/Fixtures/reference/headers/; la goTable di createGOTable sugli OBO di tests/Fixtures/reference/go/;
 # enzymeTable, mapping accession → enzimi e versione di createEnzymeTable su tests/Fixtures/reference/enzyme/;
 # pathwaysTable e mapping accession → pathway di createPathwayTableAndMapping su tests/Fixtures/reference/pathway/;
-# cdTable e mapping dominio → GO di createCDTable e createPfamGO su tests/Fixtures/reference/cdd/. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
+# cdTable e mapping dominio → GO di createCDTable e createPfamGO su tests/Fixtures/reference/cdd/;
+# mapping proteina/cluster → GO di extractFilteredMappingFile + createUniprotGO su tests/Fixtures/reference/idmapping/. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
 #
 #   tools/legacy-runner/golden-ports.sh
 set -euo pipefail
@@ -86,9 +87,13 @@ for pfam2go in pfam2go pfam2go_missing_first; do
     LEGACY_RUNNER_OUT="$golden_dir/reference" "$runner" domains tests/Fixtures/reference/cdd/cddid_all.tbl \
         "tests/Fixtures/reference/cdd/$pfam2go" "/out/domains_${pfam2go}.tsv"
 done
+for target in uniprotkb UniRef50 UniRef90 UniRef100; do
+    LEGACY_RUNNER_OUT="$golden_dir/reference" "$runner" idmapping tests/Fixtures/reference/idmapping/idmapping_selected.tab \
+        "$target" "/out/idmapping_${target}.tsv"
+done
 
 # Checksum degli input e degli output: un golden rigenerato deve risultare identico.
-(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta peptides/isoelectric_cases.tsv libsvm/tiny.model libsvm/tiny.svm reference/release/* reference/headers/* reference/go/* reference/enzyme/* reference/pathway/* reference/cdd/* \
-    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/cpc2_cases/isoelectric.tsv golden/libsvm/tiny.predictions golden/reference/release_versions.tsv golden/reference/*_headers.tsv golden/reference/go_*.tsv golden/reference/enzymes_* golden/reference/pathways_* golden/reference/domains_* golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
+(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta peptides/isoelectric_cases.tsv libsvm/tiny.model libsvm/tiny.svm reference/release/* reference/headers/* reference/go/* reference/enzyme/* reference/pathway/* reference/cdd/* reference/idmapping/* \
+    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/cpc2_cases/isoelectric.tsv golden/libsvm/tiny.predictions golden/reference/release_versions.tsv golden/reference/*_headers.tsv golden/reference/go_*.tsv golden/reference/enzymes_* golden/reference/pathways_* golden/reference/domains_* golden/reference/idmapping_* golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
     golden/*/slices_*.tsv golden/format/bioperl_rewrite.fasta golden/subset/example_subset.fasta golden/genetic_code/table_1.tsv golden/translation/codons.tsv golden/*/translation/sequences.tsv golden/orf_cases/*.tab) > "$golden_dir/SHA256SUMS"
 echo "Golden written to $golden_dir"

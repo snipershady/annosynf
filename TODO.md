@@ -280,7 +280,14 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `version()`. Golden di `createCDTable`/`createPfamGO` (comando `domains`, SELECT di MySQL sostituita dalla
   cdTable scritta). Sui file completi del 2026 (92 403 domini, 9906 associazioni, 0,3 s) cdTable identica e
   mapping identico salvo `pfam25129`, a cui il legacy dà i GO dei 102 Pfam assenti dal CDD.
-- [ ] **4.7 `IdMappingParser`** (colonne GO/UniRef trovate dall'header o dai valori) e **`SpeclistParser`**.
+- [x] **4.7 `IdMappingParser`** (colonne GO/UniRef trovate dall'header o dai valori) e **`SpeclistParser`**:
+  `IdMappingEntry` (accession, GO, cluster per variante: campi riconosciuti dal valore, riga per riga),
+  `SpeciesCode` (codice, regno, taxon, nome ufficiale/comune/sinonimo, codici virtuali), `UniProtDocumentHeader`
+  (riga `Release:` comune a `pathway.txt` e `speclist.txt`). Golden di `extractFilteredMappingFile` +
+  `createUniprotGO` (comando `idmapping`) in modalità uniprotkb e UniRef50/90/100; sulle prime 235 795 righe
+  reali dell'idmapping 2026_03 identico al legacy in tutte e quattro (~2,4 s ciascuna). `speclist.txt` non ha un
+  parser nel legacy (solo `grep` nel menu `--utils`): niente golden, verificato sul file completo (27 983 codici,
+  il totale dichiarato nell'intestazione).
 
 ## Fase 5 — Download e decompressione (M2) · elimina LWP, Net::FTP, File::Fetch, curl, gunzip, tar
 
@@ -374,6 +381,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.6, prossimo 4.7 (`IdMappingParser`, `SpeclistParser`). Le
-fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
+reali del 2026 salvo le correzioni dichiarate (§A.12). Prossimo: fase 5 (download e decompressione, M2), a
+partire da 5.1 (`SourceDownloader`). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

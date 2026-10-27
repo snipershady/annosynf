@@ -56,6 +56,10 @@ Usage:
                                                  createCDTable e createPfamGO (LIB/db_creator.pm): <out> = cdTable,
                                                  <out>.mapping = "cd_id<TAB>GO" (ogni GO esiste nel DB),
                                                  <out>.version = riga di db_versions.txt
+  legacy-runner idmapping <tab> <uniprotkb|UniRef50|UniRef90|UniRef100> <out>
+                                                 extractFilteredMappingFile e createUniprotGO (LIB/db_creator.pm):
+                                                 <out> = "accession o cluster<TAB>GO" (ogni chiave e ogni GO
+                                                 esistono nel DB)
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -420,6 +424,32 @@ PERL
         cp "$work/tables/cdTable" "$3"
         cp "$work/mapping" "$3.mapping"
         cp "$work/db_versions.txt" "$3.version"
+        rm -rf "$work"
+        ;;
+    idmapping)
+        [[ $# -eq 3 ]] || usage
+        work="$(mktemp -d)"
+        cp "$1" "$work/idmapping_selected.tab"
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$work" "$2" <<'PERL' > /dev/null
+use strict;
+use warnings;
+my ($work, $target) = @ARGV;
+DbCreatorHarness::load($work, qw(extractSelColsFromMapping extractFilteredMappingFile createUniprotGO));
+# Valori di CONFIGURATION/program_config.txt; la variante UniRef viene dal nome del FASTA, come nel legacy.
+my $variant = $target eq 'uniprotkb' ? 'uniref90' : lc $target;
+$Harness::configHash->{$_->[0]} = $_->[1] for (
+    [uniprotIdPos4Cut => 0], [goPos4Cut => 6], [useHugeRAM => 'YES'], [filtMappingFile => 'filtMappingFile.txt'],
+    [GODBLink => 'ftp://legacy/idmapping_selected.tab.gz'], [unirefDBLink => "ftp://legacy/$variant.fasta.gz"],
+);
+my $filtered = Harness::extractFilteredMappingFile();
+tie my %goIds, 'DbCreatorHarness::EveryAccession';
+tie my %proteins, 'DbCreatorHarness::EveryAccession';
+my $mapping = {};
+Harness::createUniprotGO($filtered, \%goIds, $target eq 'uniprotkb' ? 'uniprotkb' : 'uniref', 1, \$mapping, \%proteins);
+open(my $out, '>', "$work/mapping") or die $!;
+print $out join("\t", $_, $mapping->{$_}{g}), "\n" for sort keys %$mapping;
+PERL
+        cp "$work/mapping" "$3"
         rm -rf "$work"
         ;;
     shell)

@@ -6,11 +6,13 @@ namespace App\Tests\Unit\Domain\Reference;
 
 use App\Domain\Reference\Pathway;
 use App\Domain\Reference\PathwayTxtParser;
+use App\Domain\Reference\UniProtDocumentHeader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PathwayTxtParser::class)]
 #[CoversClass(Pathway::class)]
+#[CoversClass(UniProtDocumentHeader::class)]
 final class PathwayTxtParserTest extends TestCase
 {
     private const string RULE = '--------------------------------------------------------------------------------';

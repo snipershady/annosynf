@@ -6,6 +6,7 @@ namespace App\Tests\Golden;
 
 use App\Domain\Reference\Pathway;
 use App\Domain\Reference\PathwayTxtParser;
+use App\Domain\Reference\UniProtDocumentHeader;
 use App\Tests\Support\Golden\GoldenComparison;
 use App\Tests\Support\Golden\GoldenFixtures;
 use Generator;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(PathwayTxtParser::class)]
 #[CoversClass(Pathway::class)]
+#[CoversClass(UniProtDocumentHeader::class)]
 final class PathwayTxtParserParityTest extends TestCase
 {
     /**

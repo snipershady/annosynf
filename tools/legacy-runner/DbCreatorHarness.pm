@@ -18,7 +18,7 @@ sub load {
 
     for my $name (@names) {
         # Ogni sub finisce dove inizia la documentazione POD della successiva.
-        $code =~ /^(sub \Q$name\E\s*\{.*?)^=head2/ms or die "sub $name not found in db_creator.pm";
+        $code =~ /^([ \t]*sub \Q$name\E\s*\{.*?)^=head2/ms or die "sub $name not found in db_creator.pm";
         $subs .= $1;
     }
 
@@ -49,7 +49,8 @@ package Harness;
 
 use strict;
 use warnings;
-use LIB::files_management qw(extract_name delete_file append_str_2_file);
+use LIB::files_management qw(extract_name delete_file append_str_2_file extract_columns_from_file);
+use LIB::annocript_management qw(getUnirefType);
 
 our ($info, $configHash, $dbDataFolder, $tempTableFolder, $database, $dbDownloaded);
 
