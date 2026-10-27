@@ -291,8 +291,17 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
 
 ## Fase 5 — Download e decompressione (M2) · elimina LWP, Net::FTP, File::Fetch, curl, gunzip, tar
 
-- [ ] **5.1 Porta `SourceDownloader` + `HttpSourceDownloader`**: HttpClient in streaming su file, ripresa
+- [x] **5.1 Porta `SourceDownloader` + `HttpSourceDownloader`**: HttpClient in streaming su file, ripresa
   con `Range`, retry, mirror UniProt/EBI/Expasy, sha256, file già presente non riscaricato.
+  Porta in `src/Application/Port`, `SourceFile` e `SourceMirrors` in `src/Domain/Reference`, adapter in
+  `src/Infrastructure/Http`. Il file cresce in `<dest>.part` e viene rinominato solo se completo (dimensione
+  confrontata con `Content-Length`/`Content-Range`); la ripresa usa `Range` + `If-Range` con il validatore
+  salvato in `<dest>.part.validator` (ETag forte, altrimenti Last-Modified), quindi vale anche tra processi
+  diversi e riparte da zero se il file sul server è cambiato. `Accept-Encoding: identity` (altrimenti HttpClient
+  decodifica il gzip e i byte non corrispondono più). 3 tentativi per URL con attesa crescente (5 s, 10 s), poi i
+  mirror; un 4xx (tranne 408/429) passa subito al mirror. I mirror UniProt mantengono `/pub` su EBI (il legacy lo
+  toglieva). Verificato su server reali: `reldate.txt` e `enzyme.dat` (9,6 MB) scaricati, ripresa da 1 MB con
+  206 e sha256 identico, 200 con un validatore non più valido.
 - [ ] **5.2 Verifica degli URL HTTPS** di §B.10 (HEAD reale) e correzione di CLAUDE.md dove sono cambiati.
 - [ ] **5.3 Decompressione**: gz in streaming (`compress.zlib://`); per `Cdd_LE.tar.gz` un estrattore tar
   in streaming (header da 512 byte) invece di `PharData`, che su archivi da GB non è adatto. Da
@@ -383,6 +392,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
-reali del 2026 salvo le correzioni dichiarate (§A.12). Prossimo: fase 5 (download e decompressione, M2), a
-partire da 5.1 (`SourceDownloader`). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5 in corso: 5.1 (`SourceDownloader`) fatto;
+prossimo 5.2 (verifica degli URL HTTPS). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
