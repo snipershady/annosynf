@@ -52,6 +52,10 @@ Usage:
   legacy-runner pathways <pathway.txt> <out>     createPathwayTableAndMapping (LIB/db_creator.pm): <out> =
                                                  pathwaysTable "id<TAB>descrizione", <out>.mapping = "accession<TAB>id
                                                  dei pathway" (ogni accession esiste nel DB)
+  legacy-runner domains <cddid_all.tbl> <pfam2go> <out>
+                                                 createCDTable e createPfamGO (LIB/db_creator.pm): <out> = cdTable,
+                                                 <out>.mapping = "cd_id<TAB>GO" (ogni GO esiste nel DB),
+                                                 <out>.version = riga di db_versions.txt
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -366,6 +370,56 @@ print $out join("\t", $_, $mapping->{$_}{p}), "\n" for sort keys %$mapping;
 PERL
         cp "$work/tables/pathwaysTable" "$2"
         cp "$work/mapping" "$2.mapping"
+        rm -rf "$work"
+        ;;
+    domains)
+        [[ $# -eq 3 ]] || usage
+        work="$(mktemp -d)"
+        cp "$1" "$work/cddid_all.tbl"
+        cp "$2" "$work/pfam2go"
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$work" <<'PERL' > /dev/null
+use strict;
+use warnings;
+my ($work) = @ARGV;
+
+# createPfamGO legge i domini pfam da MySQL (SELECT cd_id, cdName FROM cdTable WHERE cdName LIKE 'pfam%'):
+# qui le righe vengono dalla cdTable appena scritta da createCDTable.
+package FakeStatement;
+sub new {
+    my ($class, $table) = @_;
+    open(my $in, '<', $table) or die "Cannot read $table: $!";
+    my @rows;
+    while (my $row = <$in>) {
+        my ($id, undef, $name) = split(/\t/, $row);
+        push @rows, { cd_id => $id, cdName => $name } if defined $name && $name =~ /^pfam/i;
+    }
+    return bless { rows => \@rows }, $class;
+}
+sub execute { return 1 }
+sub fetchrow_hashref { return shift @{ $_[0]{rows} } }
+
+package FakeDatabase;
+sub prepare { return FakeStatement->new("$work/tables/cdTable") }
+sub err { return 0 }
+sub commit {}
+sub disconnect {}
+
+package main;
+no warnings 'once';
+*DBI::connect = sub { return bless {}, 'FakeDatabase' };
+DbCreatorHarness::load($work, qw(createCDTable createPfamGO));
+$Harness::configHash->{pfam2GOLink} = 'ftp://legacy/pfam2go';
+$Harness::configHash->{db_versions_file} = "$work/db_versions.txt";
+Harness::createCDTable('cdTable', 'ftp://legacy/cddid_all.tbl.gz', 'anonymous', 'anonymous');
+tie my %goIds, 'DbCreatorHarness::EveryAccession';
+my $mapping = {};
+Harness::createPfamGO(\%goIds, \$mapping);
+open(my $out, '>', "$work/mapping") or die $!;
+print $out join("\t", $_, $mapping->{$_}{g}), "\n" for sort keys %$mapping;
+PERL
+        cp "$work/tables/cdTable" "$3"
+        cp "$work/mapping" "$3.mapping"
+        cp "$work/db_versions.txt" "$3.version"
         rm -rf "$work"
         ;;
     shell)

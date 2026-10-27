@@ -1,0 +1,22 @@
+!version date: 2026/07/06 18:13:03
+!description: Mapping of GO terms to Pfam entries. This mapping is generated from data supplied by InterPro for the InterPro2GO mapping.
+!external resources: http://www.ebi.ac.uk/interpro, http://pfam.sanger.ac.uk/
+!citation: Mitchell et al. (2015) Nucl. Acids Res. 43 :D213-D221
+!contact:interhelp@ebi.ac.uk
+!
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00001 7tm_1 > GO:membrane ; GO:0016020
+Pfam:PF00002 7tm_2 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00002 7tm_2 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00002 7tm_2 > GO:membrane ; GO:0016020
+Pfam:PF03396 Pox_RNA_pol_35 > GO:DNA binding ; GO:0003677
+Pfam:PF03396 Pox_RNA_pol_35 > GO:DNA-directed RNA polymerase activity ; GO:0003899
+Pfam:PF03396 Pox_RNA_pol_35 > GO:viral transcription ; GO:0019083
+Pfam:PF24980 LSU > GO:cellular oxidant detoxification ; GO:0098869
+Pfam:PF25129 Pyr4-TMTC > GO:lyase activity ; GO:0016829
+Pfam:PF25178 Beta-prop_WDR41 > GO:regulation of autophagy ; GO:0010506
+Pfam:PF25299 ZZ_ADA2 > GO:zinc ion binding ; GO:0008270
+Pfam:PF25312 Allergen_Asp_f_4 > GO:IgE binding ; GO:0019863
+Pfam:PF25312 Allergen_Asp_f_4 > GO:extracellular region ; GO:0005576
+Pfam:PF25391 WD40_Gbeta > GO:signal transduction ; GO:0007165

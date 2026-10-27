@@ -1,0 +1,10 @@
+!version date: 2026/07/06 18:13:03
+!description: Mapping of GO terms to Pfam entries. This mapping is generated from data supplied by InterPro for the InterPro2GO mapping.
+!external resources: http://www.ebi.ac.uk/interpro, http://pfam.sanger.ac.uk/
+!citation: Mitchell et al. (2015) Nucl. Acids Res. 43 :D213-D221
+!contact:interhelp@ebi.ac.uk
+!
+Pfam:PF25178 Beta-prop_WDR41 > GO:regulation of autophagy ; GO:0010506
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00001 7tm_1 > GO:membrane ; GO:0016020

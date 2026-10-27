@@ -275,7 +275,11 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `createPathwayTableAndMapping` (comando `pathways`). Sul file completo 2026_03 (1465 pathway, 131 426
   accession, 0,3 s) le sole differenze sono quelle dichiarate: il piè di pagina e un'accession ripetuta che il
   legacy mappa due volte (§A.12.23, da non riprodurre neanche nell'import di 6.3).
-- [ ] **4.6 `CddIdParser`** e **`Pfam2GoParser`** (nessun GO sul dominio precedente: §A.12.4).
+- [x] **4.6 `CddIdParser`** e **`Pfam2GoParser`** (nessun GO sul dominio precedente: §A.12.4): `CddDomain`
+  (con `sourceDatabase()` per `ref_domain.source_db`), `Pfam2GoMapping` legata all'accession Pfam (`pfam00001`),
+  `version()`. Golden di `createCDTable`/`createPfamGO` (comando `domains`, SELECT di MySQL sostituita dalla
+  cdTable scritta). Sui file completi del 2026 (92 403 domini, 9906 associazioni, 0,3 s) cdTable identica e
+  mapping identico salvo `pfam25129`, a cui il legacy dà i GO dei 102 Pfam assenti dal CDD.
 - [ ] **4.7 `IdMappingParser`** (colonne GO/UniRef trovate dall'header o dai valori) e **`SpeclistParser`**.
 
 ## Fase 5 — Download e decompressione (M2) · elimina LWP, Net::FTP, File::Fetch, curl, gunzip, tar
@@ -370,6 +374,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.5, prossimo 4.6 (`CddIdParser`, `Pfam2GoParser`). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.6, prossimo 4.7 (`IdMappingParser`, `SpeclistParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
