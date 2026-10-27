@@ -302,10 +302,20 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   mirror; un 4xx (tranne 408/429) passa subito al mirror. I mirror UniProt mantengono `/pub` su EBI (il legacy lo
   toglieva). Verificato su server reali: `reldate.txt` e `enzyme.dat` (9,6 MB) scaricati, ripresa da 1 MB con
   206 e sha256 identico, 200 con un validatore non più valido.
-- [ ] **5.2 Verifica degli URL HTTPS** di §B.10 (HEAD reale) e correzione di CLAUDE.md dove sono cambiati.
+- [x] **5.2 Verifica degli URL HTTPS** di §B.10 (HEAD reale) e correzione di CLAUDE.md dove sono cambiati.
+  Il 2026-10-27 tutte le 14 sorgenti rispondono 200 su HTTPS con `Accept-Ranges: bytes`. In §B.10 c'è ora la tabella
+  con URL esatti, dimensioni e validatori (NCBI ha solo Last-Modified, GO passa da un redirect purl). Ripresa reale
+  con `HttpSourceDownloader` verificata anche su `go-basic.obo` (attraverso il redirect) e `cddid_all.tbl.gz`
+  (Last-Modified). Mirror EBI ed Expasy: stessi file (sha256), ETag diversi, quindi un cambio di mirror riparte da
+  zero. Cambiamenti rispetto al legacy: `pathway.txt`/`speclist.txt` dall'albero della release invece di
+  `www.uniprot.org/docs/`, `pfam2go` dal percorso `current.geneontology.org/ontology/external2go/`.
 - [ ] **5.3 Decompressione**: gz in streaming (`compress.zlib://`); per `Cdd_LE.tar.gz` un estrattore tar
   in streaming (header da 512 byte) invece di `PharData`, che su archivi da GB non è adatto. Da
   verificare con un archivio reale.
+- [ ] **5.4 Catalogo delle sorgenti** (emerso in 5.2): gli URL della tabella di §B.10 in configurazione
+  (`annosynf.sources`, con la variante UniRef nel percorso) invece che solo in CLAUDE.md, più un comando
+  `annosynf:sources:check` (HEAD di ogni sorgente e dei mirror, come `annosynf:blast:check`) per ripetere questa
+  verifica quando un URL cambia. Da fare insieme al workflow Release (fase 6), che ne è il primo utente.
 
 ## Fase 6 — Persistenza e import delle release (M3) · elimina DBI, client mysql, mysqlimport
 
@@ -392,6 +402,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
-reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5 in corso: 5.1 (`SourceDownloader`) fatto;
-prossimo 5.2 (verifica degli URL HTTPS). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5 in corso: 5.1 (`SourceDownloader`) e 5.2
+(URL HTTPS verificati) fatti; prossimo 5.3 (decompressione gz e tar in streaming). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
