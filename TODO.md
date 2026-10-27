@@ -253,8 +253,12 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `ReleaseType`/`UnirefVariant`). Golden di `getDBVersion` (comando `dbversion` del legacy-runner) sui file reali
   di UniProt 2026_03 e su casi limite; correzioni dichiarate in §A.12.21 (versione validata `YYYY_MM`, riga
   cercata in tutto il file, data UniRef facoltativa, due versioni = errore).
-- [ ] **4.2 `UniProtHeaderParser`** (organismo completo, `OX` salvato: corregge §A.12.1) e
-  **`UniRefHeaderParser`** (`Tax=` senza `TaxID=`: §A.12.2).
+- [x] **4.2 `UniProtHeaderParser`** (organismo completo, `OX` salvato: corregge §A.12.1) e
+  **`UniRefHeaderParser`** (`Tax=` senza `TaxID=`: §A.12.2): `UniProtHeader`/`UniRefHeader`, `ProteinSource`,
+  `HeaderTags` (tag comuni), metodo `headers()` in streaming che salta le righe di sequenza (sostituisce `fgrep`).
+  Golden del parsing originale di `createUniprotKBDB`/`createUnirefDB` (comando `headers` del legacy-runner) su
+  header reali 2026_03 e nel formato pre-2017/2018. Correzioni in più rispetto alla spec: gene name intero
+  anche con spazi (`GN=MGF 110-1L`), nessun ID/descrizione ripetuti dall'header precedente.
 - [ ] **4.3 `OboParser`**: term + `alt_id`, obsoleti marcati, ultima stanza non persa, `[Typedef]` ignorato
   (§A.12.3).
 - [ ] **4.4 `EnzymeDatParser`** (EC, descrizione ripulita, accession dai `DR`, versione dal `CC`).
@@ -352,7 +356,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatto 4.1, prossimo 4.2 (`UniProtHeaderParser`,
-`UniRefHeaderParser`). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.2, prossimo 4.3 (`OboParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

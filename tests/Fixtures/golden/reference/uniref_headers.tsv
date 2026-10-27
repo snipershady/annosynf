@@ -1,0 +1,13 @@
+1	UniRef50_A0ACN6ENM0	Uncharacterized protein	2	Ovis ammon polii x Ovis aries TaxID=2918886	A0ACN6ENM0_9CETA
+2	UniRef90_A0ACN6ENM0	Uncharacterized protein	1	Ovis ammon polii x Ovis aries TaxID=2918886	A0ACN6ENM0_9CETA
+3	UniRef100_Q6GZX4	Putative transcription factor 001R	1	Frog virus 3 (isolate Goorha) TaxID=654924	001R_FRG3G
+4	UniRef100_P68522	5'(3')-deoxyribonucleotidase	3	root TaxID=1	53DR_BACSU
+5	UniRef50_L7L6S8	Putative non-ribosomal peptide synthetase (Fragment)	1	Gordonia hirsuta DSM 44140 = NBRC 16056 TaxID=1121927	L7L6S8_9ACTN
+6	UniRef100_Q7N2I4	5'-deoxynucleotidase plu3092	1	Photorhabdus laumondii subsp. laumondii (strain DSM 15139 / CIP 105565 / TT01) TaxID=243265	5DNU_PHOLL
+7	UniRef100_P29310-2	Isoform VI' of 14-3-3 protein zeta	1	Drosophila melanogaster TaxID=7227	P29310-2
+8	UniRef90_A0ABQ9D5G8	Serine/threonine-protein	512	Aves TaxID=8782	A0ABQ9D5G8_9PASS
+9	UniRef90_Q6GZX4	Cluster: Putative transcription factor 001R	1	Frog virus 3 (isolate Goorha)	001R_FRG3G
+10	UniRef90_Q6GZX3	Cluster: Uncharacterized protein 002L	1	Frog virus 3 (isolate Goorha) TaxID=654924	NA
+11	UniRef90_Q197F8	Uncharacterized protein 002R	1	NA	002R_IIV3
+12	UniRef90_Q197F8	Uncharacterized protein 002R	1	Invertebrate iridescent virus 3 TaxID=345201	Q197F7_IIV3
+13	UniRef90_A0A000	Protein	3	Homo sapiens TaxID=9606	A0A000_HUMAN

@@ -1,0 +1,18 @@
+1	sp|Q6GZX4|001R_FRG3G	Q6GZX4	sp	Putative transcription factor 001R	Frog virus 3 (isolate Goorha)	FV3-001R	4	1
+2	sp|Q6GZX3|002L_FRG3G	Q6GZX3	sp	Uncharacterized protein 002L	Frog virus 3 (isolate Goorha)	FV3-002L	4	1
+3	sp|Q8NF67|A2012_HUMAN	Q8NF67	sp	Putative ankyrin repeat domain-containing protein 20A12	Homo sapiens	ANKRD20A12P	5	3
+4	sp|A9CBA2|105R_ADES1	A9CBA2	sp	Protein 105R	Snake adenovirus serotype 1	NA	3	1
+5	sp|A9JLI2|1101L_ASFPP	A9JLI2	sp	Protein MGF 110-1L	African swine fever virus (isolate Pig/Portugal/OURT88/1988)	MGF	1	1
+6	sp|Q43097|ACEA_PINTA	Q43097	sp	Isocitrate lyase	Pinus taeda	ICL	2	1
+7	sp|P13813|110KD_PLAKN	P13813	sp	110 kDa antigen (Fragment)	Plasmodium knowlesi	NA	2	1
+8	sp|P31946|1433B_HUMAN	P31946	sp	14-3-3 protein beta/alpha	Homo sapiens	YWHAB	1	3
+9	sp|O04375|2A5A_ARATH	O04375	sp	Serine/threonine protein phosphatase 2A 57 kDa regulatory subunit B' alpha isoform	Arabidopsis thaliana	B'ALPHA	1	1
+10	tr|A0A0U3GSY3|A0A0U3GSY3_9CREN	A0A0U3GSY3	tr	16S rRNA methyltransferase	Sulfolobus acidocaldarius	ATY89_03280	3	1
+11	tr|Q51760|Q51760_9EURY	Q51760	tr	Glutaredoxin-like protein	Pyrococcus furiosus	NA	1	1
+12	tr|A0A6A9QJL3|A0A6A9QJL3_SULME	A0A6A9QJL3	tr	SMP-30/gluconolactonase/LRE family protein	Sulfuracidifex metallicus DSM 6482 = JCM 9184	GC250_00125	3	1
+13	tr|P95868|P95868_SACSO	P95868	tr	Glycogen debranching enzyme	Saccharolobus solfataricus	orf	1	1
+14	sp|Q6GZX4|001R_FRG3G	Q6GZX4	sp	Putative transcription factor 001R	Frog virus 3 (isolate Goorha)	FV3-001R	4	1
+15	sp|Q6GZX3|002L_FRG3G	Q6GZX3	sp	Uncharacterized protein 002L	F	NA	NA	1
+16	tr|A0A000|A0A000_HUMAN	A0A000	tr	Truncated header	H	NA	NA	NA
+17	tr|A0A000|A0A000_HUMAN	A0A000	tr	Truncated header	NA	NA	1	1
+18	tr|A0A000|A0A000_HUMAN	A0A000	tr	Truncated header	Homo sapiens	NA	1	1

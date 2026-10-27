@@ -1,0 +1,18 @@
+>sp|Q6GZX4|001R_FRG3G Putative transcription factor 001R OS=Frog virus 3 (isolate Goorha) OX=654924 GN=FV3-001R PE=4 SV=1
+>sp|Q6GZX3|002L_FRG3G Uncharacterized protein 002L OS=Frog virus 3 (isolate Goorha) OX=654924 GN=FV3-002L PE=4 SV=1
+>sp|Q8NF67|A2012_HUMAN Putative ankyrin repeat domain-containing protein 20A12 OS=Homo sapiens OX=9606 GN=ANKRD20A12P PE=5 SV=3
+>sp|A9CBA2|105R_ADES1 Protein 105R OS=Snake adenovirus serotype 1 OX=189830 PE=3 SV=1
+>sp|A9JLI2|1101L_ASFPP Protein MGF 110-1L OS=African swine fever virus (isolate Pig/Portugal/OURT88/1988) OX=443878 GN=MGF 110-1L PE=1 SV=1
+>sp|Q43097|ACEA_PINTA Isocitrate lyase OS=Pinus taeda OX=3352 GN=ICL 8 PE=2 SV=1
+>sp|P13813|110KD_PLAKN 110 kDa antigen (Fragment) OS=Plasmodium knowlesi OX=5850 PE=2 SV=1
+>sp|P31946|1433B_HUMAN 14-3-3 protein beta/alpha OS=Homo sapiens OX=9606 GN=YWHAB PE=1 SV=3
+>sp|O04375|2A5A_ARATH Serine/threonine protein phosphatase 2A 57 kDa regulatory subunit B' alpha isoform OS=Arabidopsis thaliana OX=3702 GN=B'ALPHA PE=1 SV=1
+>tr|A0A0U3GSY3|A0A0U3GSY3_9CREN 16S rRNA methyltransferase OS=Sulfolobus acidocaldarius OX=2285 GN=ATY89_03280 PE=3 SV=1
+>tr|Q51760|Q51760_9EURY Glutaredoxin-like protein OS=Pyrococcus furiosus OX=2261 PE=1 SV=1
+>tr|A0A6A9QJL3|A0A6A9QJL3_SULME SMP-30/gluconolactonase/LRE family protein OS=Sulfuracidifex metallicus DSM 6482 = JCM 9184 OX=523847 GN=GC250_00125 PE=3 SV=1
+>tr|P95868|P95868_SACSO Glycogen debranching enzyme OS=Saccharolobus solfataricus OX=2287 GN=orf c06021 PE=1 SV=1
+>sp|Q6GZX4|001R_FRG3G Putative transcription factor 001R OS=Frog virus 3 (isolate Goorha) GN=FV3-001R PE=4 SV=1
+>sp|Q6GZX3|002L_FRG3G Uncharacterized protein 002L OS=Frog virus 3 (isolate Goorha) SV=1
+>tr|A0A000|A0A000_HUMAN Truncated header OS=Homo sapiens OX=9606
+>sp|P99999|NOOS_HUMAN Protein without organism PE=1 SV=1
+>sp|P99998|EMPTY_HUMAN OS=Homo sapiens OX=9606 PE=1 SV=1
