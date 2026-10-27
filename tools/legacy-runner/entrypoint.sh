@@ -45,6 +45,10 @@ Usage:
                                                  \N dove il legacy non scrive un valore
   legacy-runner goterms <obo> <out>              goTable scritta da createGOTable (LIB/db_creator.pm):
                                                  "id<TAB>go_id<TAB>nome<TAB>namespace"
+  legacy-runner enzymes <enzyme.dat> <out>       createEnzymeTable (LIB/db_creator.pm): <out> = enzymeTable
+                                                 "id<TAB>EC<TAB>descrizione", <out>.mapping = "accession<TAB>id
+                                                 degli enzimi" (ogni accession dei DR esiste nel DB),
+                                                 <out>.version = riga di db_versions.txt
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -314,6 +318,37 @@ my $goTableHash = {};
 Harness::createGOTable('ftp://legacy/go.obo', \$goTableHash, 1);
 PERL
         cp "$work/tables/goTable" "$2"
+        rm -rf "$work"
+        ;;
+    enzymes)
+        [[ $# -eq 2 ]] || usage
+        work="$(mktemp -d)"
+        cp "$1" "$work/enzyme.dat"
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$work" <<'PERL' > /dev/null
+use strict;
+use warnings;
+my ($work) = @ARGV;
+
+# Tabella accession → id interno in cui ogni accession esiste e ha per id sé stessa: il mapping risultante è
+# accession → enzimi.
+package EveryAccession;
+sub TIEHASH { return bless {}, shift }
+sub FETCH { return $_[1] }
+sub EXISTS { return 1 }
+
+package main;
+DbCreatorHarness::load($work, qw(extractEnzimeIdsFile createEnzymeTable));
+$Harness::configHash->{db_versions_file} = "$work/db_versions.txt";
+$Harness::configHash->{useHugeRAM} = 'YES';
+tie my %accessions, 'EveryAccession';
+my $mapping = {};
+Harness::createEnzymeTable('ftp://legacy/enzyme.dat', \$mapping, 'uniprotkb', \%accessions);
+open(my $out, '>', "$work/mapping") or die $!;
+print $out join("\t", $_, $mapping->{$_}{e}), "\n" for sort keys %$mapping;
+PERL
+        cp "$work/tables/enzymeTable" "$2"
+        cp "$work/mapping" "$2.mapping"
+        cp "$work/db_versions.txt" "$2.version"
         rm -rf "$work"
         ;;
     shell)

@@ -41,7 +41,7 @@ package Harness;
 
 use strict;
 use warnings;
-use LIB::files_management qw(extract_name delete_file);
+use LIB::files_management qw(extract_name delete_file append_str_2_file);
 
 our ($info, $configHash, $dbDataFolder, $tempTableFolder, $database, $dbDownloaded);
 

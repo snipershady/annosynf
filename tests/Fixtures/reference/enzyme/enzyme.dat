@@ -1,0 +1,282 @@
+CC   -----------------------------------------------------------------------
+CC
+CC   ENZYME nomenclature database
+CC
+CC   -----------------------------------------------------------------------
+CC   Release of 02-Sep-2026
+CC   -----------------------------------------------------------------------
+CC
+CC   Alan Bridge and Kristian Axelsen
+CC   SIB Swiss Institute of Bioinformatics
+CC   Centre Medical Universitaire (CMU)
+CC   1, rue Michel Servet
+CC   1211 Geneva 4
+CC   Switzerland
+CC
+CC   Email: enzyme@expasy.org
+CC
+CC   WWW server: https://enzyme.expasy.org/
+CC
+CC   -----------------------------------------------------------------------
+CC   Copyrighted by the SIB Swiss Institute of Bioinformatics and
+CC   distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   -----------------------------------------------------------------------
+//
+ID   1.1.1.1
+DE   alcohol dehydrogenase.
+AN   aldehyde reductase.
+CA   (1) a primary alcohol + NAD(+) = an aldehyde + NADH + H(+).
+CA   (2) a secondary alcohol + NAD(+) = a ketone + NADH + H(+).
+CC   -!- Acts on primary or secondary alcohols or hemi-acetals with very broad
+CC       specificity; however the enzyme oxidizes methanol much more poorly
+CC       than ethanol.
+CC   -!- The animal, but not the yeast, enzyme acts also on cyclic secondary
+CC       alcohols.
+CC   -!- Formerly EC 1.1.1.32.
+DR   P07327, ADH1A_HUMAN;  P28469, ADH1A_MACMU;  Q5RBP7, ADH1A_PONAB;
+DR   P25405, ADH1A_SAAHA;  P25406, ADH1B_SAAHA;  P00327, ADH1E_HORSE;
+DR   P00326, ADH1G_HUMAN;  O97959, ADH1G_PAPHA;  P00328, ADH1S_HORSE;
+DR   P80222, ADH1_ALLMI ;  P30350, ADH1_ANAPL ;  P49645, ADH1_APTAU ;
+DR   P06525, ADH1_ARATH ;  P41747, ADH1_ASPFN ;  Q17334, ADH1_CAEEL ;
+DR   P43067, ADH1_CANAX ;  P85440, ADH1_CATRO ;  P14219, ADH1_CENAM ;
+DR   P48814, ADH1_CERCA ;  Q70UN9, ADH1_CERCO ;  P23991, ADH1_CHICK ;
+DR   P86883, ADH1_COLLI ;  P19631, ADH1_COTJA ;  P23236, ADH1_DROHY ;
+DR   P48586, ADH1_DROMN ;  P09370, ADH1_DROMO ;  P22246, ADH1_DROMT ;
+DR   P07161, ADH1_DROMU ;  P12854, ADH1_DRONA ;  P08843, ADH1_EMENI ;
+DR   A0A165U5V5, ADH1_EUPLT ;  P26325, ADH1_GADMC ;  Q9Z2M2, ADH1_GEOAT ;
+DR   Q64413, ADH1_GEOBU ;  Q64415, ADH1_GEOKN ;  P12311, ADH1_GEOSE ;
+DR   P05336, ADH1_HORVU ;  P20369, ADH1_KLULA ;  Q07288, ADH1_KLUMA ;
+DR   P00333, ADH1_MAIZE ;  P86885, ADH1_MESAU ;  P00329, ADH1_MOUSE ;
+DR   P80512, ADH1_NAJNA ;  Q9P6C8, ADH1_NEUCR ;  Q75ZX4, ADH1_ORYSI ;
+DR   Q2R8Z5, ADH1_ORYSJ ;  P12886, ADH1_PEA   ;  P22797, ADH1_PELPE ;
+DR   P41680, ADH1_PERMA ;  P25141, ADH1_PETHY ;  O00097, ADH1_PICST ;
+DR   Q03505, ADH1_RABIT ;  P06757, ADH1_RAT   ;  P14673, ADH1_SOLTU ;
+DR   P80338, ADH1_STRCA ;  P13603, ADH1_TRIRP ;  P00330, ADH1_YEAST ;
+DR   Q07264, ADH1_ZEALU ;  P20368, ADH1_ZYMMO ;  O45687, ADH2_CAEEL ;
+DR   O94038, ADH2_CANAL ;  P48815, ADH2_CERCA ;  Q70UP5, ADH2_CERCO ;
+DR   Q70UP6, ADH2_CERRO ;  P27581, ADH2_DROAR ;  P25720, ADH2_DROBU ;
+DR   P23237, ADH2_DROHY ;  P48587, ADH2_DROMN ;  P09369, ADH2_DROMO ;
+DR   P07160, ADH2_DROMU ;  P24267, ADH2_DROWH ;  P37686, ADH2_ECOLI ;
+DR   P54202, ADH2_EMENI ;  Q24803, ADH2_ENTH1 ;  P42327, ADH2_GEOSE ;
+DR   P10847, ADH2_HORVU ;  P49383, ADH2_KLULA ;  Q9P4C2, ADH2_KLUMA ;
+DR   P04707, ADH2_MAIZE ;  Q4R1E8, ADH2_ORYSI ;  Q0ITW7, ADH2_ORYSJ ;
+DR   O13309, ADH2_PICST ;  P28032, ADH2_SOLLC ;  P14674, ADH2_SOLTU ;
+DR   F2Z678, ADH2_YARLI ;  P00331, ADH2_YEAST ;  F8DVL8, ADH2_ZYMMA ;
+DR   P0DJA2, ADH2_ZYMMO ;  P07754, ADH3_EMENI ;  P42328, ADH3_GEOSE ;
+DR   P10848, ADH3_HORVU ;  P49384, ADH3_KLULA ;  P14675, ADH3_SOLTU ;
+DR   P07246, ADH3_YEAST ;  P49385, ADH4_KLULA ;  Q09669, ADH4_SCHPO ;
+DR   A6ZTT5, ADH4_YEAS7 ;  P10127, ADH4_YEAST ;  Q6XQ67, ADH5_SACPS ;
+DR   P38113, ADH5_YEAST ;  P28332, ADH6_HUMAN ;  P41681, ADH6_PERMA ;
+DR   Q5R7Z8, ADH6_PONAB ;  Q5XI95, ADH6_RAT   ;  P40394, ADH7_HUMAN ;
+DR   Q64437, ADH7_MOUSE ;  P41682, ADH7_RAT   ;  P9WQC0, ADHA_MYCTO ;
+DR   P9WQC1, ADHA_MYCTU ;  O31186, ADHA_RHIME ;  A0A7U2MMF3, ADHB_ASPFN ;
+DR   Q7U1B9, ADHB_MYCBO ;  P9WQC6, ADHB_MYCTO ;  P9WQC7, ADHB_MYCTU ;
+DR   P9WQB8, ADHD_MYCTO ;  P9WQB9, ADHD_MYCTU ;  P33744, ADHE_CLOAB ;
+DR   P0A9Q8, ADHE_ECO57 ;  P0A9Q7, ADHE_ECOLI ;  A0A0H2ZM56, ADHE_STRP2 ;
+DR   A0A0H2URT2, ADHE_STRPN ;  P81600, ADHH_GADMO ;  P72324, ADHI_CERS4 ;
+DR   Q9SK86, ADHL1_ARATH;  Q9SK87, ADHL2_ARATH;  A1L4Y2, ADHL3_ARATH;
+DR   Q8VZ49, ADHL4_ARATH;  Q0V7W6, ADHL5_ARATH;  Q8LEB2, ADHL6_ARATH;
+DR   Q9FH04, ADHL7_ARATH;  P81601, ADHL_GADMO ;  P39451, ADHP_ECOLI ;
+DR   O46649, ADHP_RABIT ;  O46650, ADHQ_RABIT ;  Q96533, ADHX_ARATH ;
+DR   Q3ZC42, ADHX_BOVIN ;  Q17335, ADHX_CAEEL ;  Q54TC2, ADHX_DICDI ;
+DR   P46415, ADHX_DROME ;  P19854, ADHX_HORSE ;  P11766, ADHX_HUMAN ;
+DR   P93629, ADHX_MAIZE ;  P28474, ADHX_MOUSE ;  P80360, ADHX_MYXGL ;
+DR   P81431, ADHX_OCTVU ;  A2XAZ3, ADHX_ORYSI ;  Q0DWH1, ADHX_ORYSJ ;
+DR   P80572, ADHX_PEA   ;  O19053, ADHX_RABIT ;  P12711, ADHX_RAT   ;
+DR   P80467, ADHX_SAAHA ;  P86884, ADHX_SCYCA ;  P79896, ADHX_SPAAU ;
+DR   Q9NAR7, ADH_BACOL  ;  P14940, ADH_CUPNE  ;  Q0KDL6, ADH_CUPNH  ;
+DR   Q00669, ADH_DROAD  ;  P21518, ADH_DROAF  ;  P25139, ADH_DROAM  ;
+DR   Q50L96, ADH_DROAN  ;  P48584, ADH_DROBO  ;  P22245, ADH_DRODI  ;
+DR   Q9NG42, ADH_DROEQ  ;  P28483, ADH_DROER  ;  P48585, ADH_DROFL  ;
+DR   P51551, ADH_DROGR  ;  Q09009, ADH_DROGU  ;  P51549, ADH_DROHA  ;
+DR   P21898, ADH_DROHE  ;  Q07588, ADH_DROIM  ;  Q9NG40, ADH_DROIN  ;
+DR   Q27404, ADH_DROLA  ;  P10807, ADH_DROLE  ;  P07162, ADH_DROMA  ;
+DR   Q09010, ADH_DROMD  ;  P00334, ADH_DROME  ;  Q00671, ADH_DROMM  ;
+DR   P25721, ADH_DROMY  ;  Q00672, ADH_DRONI  ;  P07159, ADH_DROOR  ;
+DR   P84328, ADH_DROPB  ;  P37473, ADH_DROPE  ;  P23361, ADH_DROPI  ;
+DR   P23277, ADH_DROPL  ;  Q6LCE4, ADH_DROPS  ;  Q9U8S9, ADH_DROPU  ;
+DR   Q9GN94, ADH_DROSE  ;  Q24641, ADH_DROSI  ;  P23278, ADH_DROSL  ;
+DR   Q03384, ADH_DROSU  ;  P28484, ADH_DROTE  ;  P51550, ADH_DROTS  ;
+DR   B4M8Y0, ADH_DROVI  ;  Q05114, ADH_DROWI  ;  P26719, ADH_DROYA  ;
+DR   P17648, ADH_FRAAN  ;  P48977, ADH_MALDO  ;  Q8GIX7, ADH_MORSE  ;
+DR   P9WQC2, ADH_MYCTO  ;  P9WQC3, ADH_MYCTU  ;  P39462, ADH_SACS2  ;
+DR   P25988, ADH_SCAAL  ;  Q00670, ADH_SCACA  ;  P00332, ADH_SCHPO  ;
+DR   Q2FJ31, ADH_STAA3  ;  Q2G0G1, ADH_STAA8  ;  Q2YSX0, ADH_STAAB  ;
+DR   Q5HI63, ADH_STAAC  ;  Q99W07, ADH_STAAM  ;  Q7A742, ADH_STAAN  ;
+DR   Q6GJ63, ADH_STAAR  ;  Q6GBM4, ADH_STAAS  ;  Q8NXU1, ADH_STAAW  ;
+DR   Q5HRD6, ADH_STAEQ  ;  Q8CQ56, ADH_STAES  ;  Q4J781, ADH_SULAC  ;
+DR   P50381, ADH_SULSR  ;  Q96XE0, ADH_SULTO  ;  A0A0S1X9S7, ADH_THEBA  ;
+DR   P51552, ADH_ZAPTU  ;  Q5AR48, ASQE_EMENI ;  A5JYX5, DHS3_CAEEL ;
+DR   P76553, EUTG_ECOLI ;  P41795, EUTG_SALTY ;  P78870, FADH1_SCHPO;
+DR   O74540, FADH2_SCHPO;  P9WEE4, FADH_ASPFN ;  P0CL53, FADH_ASPOR ;
+DR   Q06099, FADH_CANMA ;  P47734, FADH_METMR ;  P45382, FADH_PARDE ;
+DR   O74685, FADH_PICPA ;  P32771, FADH_YEAST ;  A7ZIA4, FRMA_ECO24 ;
+DR   Q8X5J4, FRMA_ECO57 ;  A7ZX04, FRMA_ECOHS ;  A1A835, FRMA_ECOK1 ;
+DR   Q0TKS7, FRMA_ECOL5 ;  Q8FKG1, FRMA_ECOL6 ;  B1J085, FRMA_ECOLC ;
+DR   P25437, FRMA_ECOLI ;  B1LIP1, FRMA_ECOSM ;  Q1RFI7, FRMA_ECOUT ;
+DR   P44557, FRMA_HAEIN ;  P39450, FRMA_PHODP ;  Q3Z550, FRMA_SHISS ;
+DR   P73138, FRMA_SYNY3 ;  E1ACQ9, NOTN_ASPSM ;  N4WE73, OXI1_COCH4 ;
+DR   N4WE43, RED2_COCH4 ;  N4WW42, RED3_COCH4 ;  P33010, TERPD_PSESP;
+DR   O07737, Y1895_MYCTU;
+//
+ID   1.1.1.5
+DE   Transferred entry: 1.1.1.303 and 1.1.1.304.
+//
+ID   1.1.1.7
+DE   propanediol-phosphate dehydrogenase.
+CA   propane-1,2-diol 1-phosphate + NAD(+) = hydroxyacetone phosphate + NADH +
+CA   H(+).
+//
+ID   1.1.1.47
+DE   glucose 1-dehydrogenase [NAD(P)(+)].
+CA   (1) D-glucose + NADP(+) = D-glucono-1,5-lactone + NADPH + H(+).
+CA   (2) D-glucose + NAD(+) = D-glucono-1,5-lactone + NADH + H(+).
+CC   -!- This enzyme has similar activity with either NAD(+) or NADP(+). cf.
+CC       EC 1.1.1.118 and EC 1.1.1.119.
+DR   P39482, DHG1_PRIMG ;  P80869, DHG2_BACSU ;  P39483, DHG2_PRIMG ;
+DR   P39484, DHG3_PRIMG ;  P39485, DHG4_PRIMG ;  P10528, DHGA_PRIMG ;
+DR   P07999, DHGB_PRIMG ;  P12310, DHG_BACSU  ;  P40288, DHG_PRIMG  ;
+DR   O95479, G6PE_HUMAN ;  Q8CFX1, G6PE_MOUSE ;  P56201, G6PE_RABIT ;
+DR   A8M8R2, GLCD1_CALMQ;  D2RW30, GLCD1_HALTV;  Q6L1C8, GLCD1_PICTO;
+DR   Q7LYI9, GLCD1_SACS2;  F0QUB3, GLCD1_VULM7;  A8MAG0, GLCD2_CALMQ;
+DR   D2S1F7, GLCD2_HALTV;  Q97UH6, GLCD2_SACS2;  F0QYK7, GLCD2_VULM7;
+DR   Q97U21, GLCD3_SACS2;  Q5V3L1, GLCDH_HALMA;  Q977U7, GLCDH_HALMT;
+DR   Q9HS17, GLCDH_HALSA;  Q0W5A6, GLCDH_METAR;  D1YUK8, GLCDH_METPS;
+DR   A4YGA7, GLCDH_METS5;  O93715, GLCDH_SACSO;  P13203, GLCDH_THEAC;
+DR   Q703W7, GLCDH_THETK;  P52037, YGFF_ECOLI ;
+//
+ID   1.1.1.74
+DE   Deleted entry.
+//
+ID   1.1.1.170
+DE   3beta-hydroxysteroid-4alpha-carboxylate 3-dehydrogenase
+DE   (decarboxylating).
+AN   3beta-hydroxy-4alpha-methylcholestenecarboxylate 3-dehydrogenase
+AN   (decarboxylating).
+AN   3beta-hydroxy-4beta-methylcholestenecarboxylate 3-dehydrogenase
+AN   (decarboxylating).
+AN   3beta-hydroxy-4beta-methylcholestenoate dehydrogenase.
+AN   sterol-4alpha-carboxylate 3-dehydrogenase (decarboxylating).
+AN   sterol 4alpha-carboxylic decarboxylase.
+CA   (1) a 3beta-hydroxysteroid-4alpha-carboxylate + NADP(+) = a 3-oxosteroid
+CA   + CO2 + NADPH.
+CA   (2) a 3beta-hydroxysteroid-4alpha-carboxylate + NAD(+) = a 3-oxosteroid +
+CA   CO2 + NADH.
+CC   -!- The enzyme participates in the biosynthesis of several important
+CC       sterols such as ergosterol and cholesterol.
+CC   -!- It is part of a three enzyme system that removes methyl groups from
+CC       the C-4 position of steroid molecules.
+CC   -!- The first enzyme, EC 1.14.18.9, catalyzes three successive oxidations
+CC       of the methyl group, resulting in a carboxyl group; the second
+CC       enzyme, EC 1.1.1.170, catalyzes an oxidative decarboxylation that
+CC       results in a reduction of the 3beta-hydroxy group at the C-3 carbon
+CC       to an oxo group; and the last enzyme, EC 1.1.1.270, reduces the 3-oxo
+CC       group back to a 3beta-hydroxyl.
+CC   -!- If a second methyl group remains at the C-4 position, this enzyme
+CC       also catalyzes its epimerization from 4beta to 4alpha orientation,
+CC       so it could serve as a substrate for a second round of demethylation.
+CC       cf. EC 1.1.1.418.
+DR   Q5A1B0, ERG26_CANAL;  O43050, ERG26_SCHPO;  P53199, ERG26_YEAST;
+DR   A9X4U2, HSDD3_ARATH;  Q3ZBE9, NSDHL_BOVIN;  Q54L85, NSDHL_DICDI;
+DR   Q15738, NSDHL_HUMAN;  Q9R1J0, NSDHL_MOUSE;  Q5PPL3, NSDHL_RAT  ;
+//
+ID   1.1.1.220
+DE   6-pyruvoyltetrahydropterin 2'-reductase.
+AN   6PPH4(2'-oxo) reductase.
+AN   6-pyruvoyl tetrahydropterin (2'-oxo)reductase.
+AN   6-pyruvoyl-tetrahydropterin 2'-reductase.
+AN   pyruvoyl-tetrahydropterin reductase.
+CA   6-lactoyl-5,6,7,8-tetrahydropterin + NADP(+) = 6-pyruvoyl-5,6,7,8-
+CA   tetrahydropterin + NADPH + H(+).
+CC   -!- Not identical with EC 1.1.1.153.
+//
+ID   1.7.2.2
+DE   nitrite reductase (cytochrome; ammonia-forming).
+AN   cytochrome c552.
+AN   cytochrome c nitrite reductase.
+AN   multiheme nitrite reductase.
+CA   6 Fe(III)-[cytochrome c] + NH4(+) + 2 H2O = 6 Fe(II)-[cytochrome c] +
+CA   nitrite + 8 H(+).
+CC   -!- The enzyme also reduces nitric oxide and hydroxylamine to ammonia,
+CC       and sulfite to sulfide.
+DR   L0DSL2, NIR_THIND  ;  A8ERP8, NRFA_ALIB4 ;  Q5E4J7, NRFA_ALIF1 ;
+DR   B5FEY0, NRFA_ALIFM ;  B6EH98, NRFA_ALISL ;  Q5LI95, NRFA_BACFN ;
+DR   Q64ZA7, NRFA_BACFR ;  Q8A7V7, NRFA_BACTN ;  A8AN26, NRFA_CITK8 ;
+DR   Q6ARF1, NRFA_DESPS ;  A7ZUU5, NRFA_ECO24 ;  B7UPN8, NRFA_ECO27 ;
+DR   B7MJT8, NRFA_ECO45 ;  B7LB19, NRFA_ECO55 ;  P0ABL0, NRFA_ECO57 ;
+DR   B5Z1D1, NRFA_ECO5E ;  B7NSN2, NRFA_ECO7I ;  B7N2T7, NRFA_ECO81 ;
+DR   B7M7Y3, NRFA_ECO8A ;  C5A163, NRFA_ECOBW ;  B1XCV6, NRFA_ECODH ;
+DR   A8A7H1, NRFA_ECOHS ;  A1AIR1, NRFA_ECOK1 ;  Q0T9X8, NRFA_ECOL5 ;
+DR   Q8CVI1, NRFA_ECOL6 ;  B1IUI1, NRFA_ECOLC ;  P0ABK9, NRFA_ECOLI ;
+DR   B7NG13, NRFA_ECOLU ;  B6I5T8, NRFA_ECOSE ;  B1LPN5, NRFA_ECOSM ;
+DR   Q1R3J6, NRFA_ECOUT ;  C5BES4, NRFA_EDWI9 ;  Q7VNX8, NRFA_HAEDU ;
+DR   Q4QLL8, NRFA_HAEI8 ;  P45017, NRFA_HAEIN ;  Q06PW6, NRFA_MANHA ;
+DR   Q65RI4, NRFA_MANSM ;  C6BYZ2, NRFA_MARSD ;  Q72EF3, NRFA_NITV2 ;
+DR   A6L890, NRFA_PARD8 ;  Q9CPL4, NRFA_PASMU ;  Q6D613, NRFA_PECAS ;
+DR   C6DK80, NRFA_PECCP ;  Q6LSQ7, NRFA_PHOPR ;  Q7MTW1, NRFA_PORGI ;
+DR   B5F2F2, NRFA_SALA4 ;  A9MGK5, NRFA_SALAR ;  Q57GV0, NRFA_SALCH ;
+DR   B5FRF3, NRFA_SALDC ;  B5QZA1, NRFA_SALEP ;  B5R941, NRFA_SALG2 ;
+DR   B4TEB5, NRFA_SALHS ;  B4T1X2, NRFA_SALNS ;  Q5PJ02, NRFA_SALPA ;
+DR   A9N1R7, NRFA_SALPB ;  C0Q554, NRFA_SALPC ;  B5BJZ8, NRFA_SALPK ;
+DR   B4TRK5, NRFA_SALSV ;  Q8Z1Q9, NRFA_SALTI ;  Q8ZKF5, NRFA_SALTY ;
+DR   A1S3A0, NRFA_SHEAM ;  Q087T3, NRFA_SHEFN ;  Q8EAC7, NRFA_SHEON ;
+DR   A4Y382, NRFA_SHEPC ;  A0KSX7, NRFA_SHESA ;  A8FRR9, NRFA_SHESH ;
+DR   Q0HMH8, NRFA_SHESM ;  Q0HRB0, NRFA_SHESR ;  A1RNQ3, NRFA_SHESW ;
+DR   B1KFU9, NRFA_SHEWM ;  B2TXA4, NRFA_SHIB3 ;  Q31TS5, NRFA_SHIBS ;
+DR   Q83P93, NRFA_SHIFL ;  Q3YUR5, NRFA_SHISS ;  Q9Z4P4, NRFA_SULDE ;
+DR   Q87ND9, NRFA_VIBPA ;  Q8D8E5, NRFA_VIBVU ;  Q7MM23, NRFA_VIBVY ;
+DR   Q9S1E5, NRFA_WOLSU ;
+//
+ID   1.7.99.4
+DE   Transferred entry: 1.7.1.1, 1.7.1.2, 1.7.1.3, 1.7.5.1, 1.7.7.2 and
+DE   1.9.6.1.
+//
+ID   2.3.1.231
+DE   tRNA(Phe) {7-[3-amino-3-(methoxycarbonyl)propyl]wyosine(37)-N}-
+DE   methoxycarbonyltransferase.
+AN   tRNA-yW synthesizing enzyme-4.
+CA   7-[(3S)-(3-amino-3-methoxycarbonyl)propyl]wyosine(37) in tRNA(Phe) +
+CA   S-adenosyl-L-methionine + CO2 = wybutosine(37) in tRNA(Phe) + S-adenosyl-
+CA   L-homocysteine + 2 H(+).
+CC   -!- The enzyme is found only in eukaryotes, where it is involved in the
+CC       biosynthesis of wybutosine, a hypermodified tricyclic base found at
+CC       position 37 of certain tRNAs.
+CC   -!- The modification is important for translational reading-frame
+CC       maintenance.
+CC   -!- In some species that produce hydroxywybutosine the enzyme uses
+CC       7-[2-hydroxy-3-amino-3-(methoxycarbonyl)propyl]wyosine(37) in
+CC       tRNA(Phe) as substrate.
+CC   -!- The enzyme also has the activity of EC 2.1.1.290.
+DR   Q4WVD1, TYW4_ASPFU ;  Q2U6D4, TYW4_ASPOR ;  Q5A931, TYW4_CANAL ;
+DR   Q6FXA5, TYW4_CANGA ;  Q5BH52, TYW4_EMENI ;  Q75AW4, TYW4_EREGS ;
+DR   Q4IER0, TYW4_GIBZE ;  O60294, TYW4_HUMAN ;  Q8BYR1, TYW4_MOUSE ;
+DR   Q9P3K9, TYW4_NEUCR ;  Q5XIA3, TYW4_RAT   ;  O60157, TYW4_SCHPO ;
+DR   Q6C3P4, TYW4_YARLI ;  Q08282, TYW4_YEAST ;
+//
+ID   2.3.1.303
+DE   alpha-L-Rha-(1->2)-alpha-D-Man-(1->2)-alpha-D-Man-(1->3)-alpha-D-Gal-
+DE   PP-Und 2(IV)-O-acetyltransferase.
+CA   alpha-L-Rha-(1->2)-alpha-D-Man-(1->2)-alpha-D-Man-(1->3)-alpha-D-Gal-
+CA   di-trans,octa-cis-undecaprenyl diphosphate + acetyl-CoA = alpha-L-
+CA   2OAcRha-(1->2)-alpha-D-Man-(1->2)-alpha-D-Man-(1->3)-alpha-D-Gal-
+CA   di-trans,octa-cis-undecaprenyl diphosphate + CoA.
+CC   -!- The enzyme, present in Salmonella strains that belong to group C2,
+CC       participates in the biosynthesis of the repeat unit of O antigens
+CC       produced by these strains.
+//
+ID   7.6.2.16
+DE   ABC-type putrescine transporter.
+AN   putrescine ABC transporter.
+AN   putrescine transporting ATPase.
+CA   putrescine(out) + ATP + H2O = putrescine(in) + ADP + phosphate + H(+).
+CC   -!- ATP-binding cassette (ABC) type transporter, characterized by the
+CC       presence of two similar ATP-binding domains/proteins and two integral
+CC       membrane domains/proteins.
+CC   -!- The enzyme from the bacterium Escherichia coli interacts with an
+CC       extracytoplasmic substrate binding protein and mediates the high
+CC       affinity uptake of putrescine.
+CC   -!- Differs in specificity from EC 7.6.2.11, ABC-type polyamine
+CC       transporter.
+DR   Q9H7F0, AT133_HUMAN;  Q95JN5, AT133_MACFA;  Q5XF89, AT133_MOUSE;
+DR   P31134, POTG_ECOLI ;
+//

@@ -264,7 +264,11 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `createGOTable` (comando `goterms`; il legacy-runner ha ora `DbCreatorHarness.pm` per eseguire le sub di
   `db_creator.pm`). Sul `go-basic.obo` completo (2026-07-26, 48 340 term, 0,75 s, 5 MB) le sole differenze dal
   legacy sono quelle dichiarate: 7 nomi con `": "` troncati dal legacy e l'ultimo term perso.
-- [ ] **4.4 `EnzymeDatParser`** (EC, descrizione ripulita, accession dai `DR`, versione dal `CC`).
+- [x] **4.4 `EnzymeDatParser`** (EC, descrizione ripulita, accession dai `DR`, versione dal `CC`):
+  `EnzymeEntry` con `description()` (testo di ENZYME) e `legacyDescription()` (ripulita come la enzymeTable),
+  `release()`. Golden di `createEnzymeTable` (comando `enzymes`, con il mapping accession → enzimi). Sul file
+  completo del 02-Sep-2026 (8472 voci, 239 440 coppie accession-enzima, 0,7 s) identico al legacy; unica
+  correzione, l'ultima voce senza DR (§A.12.22). Corretto §A.7.6: la enzymeTable contiene anche le voci senza DR.
 - [ ] **4.5 `PathwayTxtParser`** (livelli con trim, niente piè di pagina come pathway: §A.12.5).
 - [ ] **4.6 `CddIdParser`** e **`Pfam2GoParser`** (nessun GO sul dominio precedente: §A.12.4).
 - [ ] **4.7 `IdMappingParser`** (colonne GO/UniRef trovate dall'header o dai valori) e **`SpeclistParser`**.
@@ -284,6 +288,8 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `reference_blast_db`, `organism_set*` (ORM) e delle tabelle `ref_*` partizionate (SQL esplicito).
 - [ ] **6.2 `MysqlLoadDataBulkLoader`**: `LOAD DATA LOCAL INFILE` via `Pdo\Mysql` limitato a `var/tmp/bulk`.
   Prerequisito: `local_infile=ON` sul server (oggi è `0`).
+- [?] **Descrizione in `ref_enzyme`** (da decidere a 6.3): testo di ENZYME (`EnzymeEntry::description()`) o
+  forma ripulita del legacy; l'export compatibile ha bisogno della seconda (le righe `DE` unite da due spazi).
 - [ ] **6.3 Task di import set-based** (staging + `INSERT … SELECT … JOIN`), idempotenti, con workflow
   Release e Messenger; lock per release.
 - [ ] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
@@ -359,6 +365,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.3, prossimo 4.4 (`EnzymeDatParser`). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.4, prossimo 4.5 (`PathwayTxtParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
