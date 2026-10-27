@@ -58,6 +58,7 @@ RUN curl -fsSL -o /tmp/libpng12.deb http://archive.debian.org/debian/pool/main/l
 ENV CPC_HOME=/opt/CPC2-beta \
     DNA2PEP_HOME=/opt/dna2pep-1.1
 WORKDIR /out
+COPY --chmod=0755 DbCreatorHarness.pm /usr/local/lib/legacy-runner/DbCreatorHarness.pm
 COPY --chmod=0755 entrypoint.sh /usr/local/bin/legacy-runner
 ENTRYPOINT ["legacy-runner"]
 CMD ["versions"]

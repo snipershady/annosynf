@@ -1,0 +1,20 @@
+1	GO:0000001	mitochondrion inheritance	P
+2	GO:0000075	cell cycle checkpoint signaling	P
+3	GO:0031576	cell cycle checkpoint signaling	P
+4	GO:0071779	cell cycle checkpoint signaling	P
+5	GO:0072395	cell cycle checkpoint signaling	P
+6	GO:0072404	cell cycle checkpoint signaling	P
+7	GO:0072407	cell cycle checkpoint signaling	P
+8	GO:0000124	SAGA complex	C
+9	GO:0000125	SAGA complex	C
+10	GO:0030914	SAGA complex	C
+11	GO:0000161	obsolete osmosensory signaling MAPK cascade	P
+12	GO:0000167	obsolete osmosensory signaling MAPK cascade	P
+13	GO:0000168	obsolete osmosensory signaling MAPK cascade	P
+14	GO:0000169	obsolete osmosensory signaling MAPK cascade	P
+15	GO:0000173	obsolete osmosensory signaling MAPK cascade	P
+16	GO:0007233	obsolete osmosensory signaling MAPK cascade	P
+17	GO:0003674	molecular_function	F
+18	GO:0005554	molecular_function	F
+19	GO:0090430	caffeoyl-CoA	F
+20	GO:0102593	obsolete UDP-glucose	F

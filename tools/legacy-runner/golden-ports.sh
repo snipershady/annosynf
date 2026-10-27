@@ -7,7 +7,7 @@
 # sui casi limite di orf_cases.fasta; l'ORF scelto da CPC2 (FindCDS) sui set e, con l'output completo di CPC2, sui
 # casi limite di cpc2_orf_cases.fasta; la traduzione Biopython di tutti i codoni IUPAC e il punto isoelettrico di isoelectric_cases.tsv; svm-predict su un modello minimo; la versione della release (getDBVersion) dai file di
 # tests/Fixtures/reference/release/; il parsing degli header UniProtKB e UniRef (createUniprotKBDB, createUnirefDB) di
-# tests/Fixtures/reference/headers/. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
+# tests/Fixtures/reference/headers/; la goTable di createGOTable sugli OBO di tests/Fixtures/reference/go/. Scrive in tests/Fixtures/golden/<set>/ e aggiorna i checksum in SHA256SUMS.
 #
 #   tools/legacy-runner/golden-ports.sh
 set -euo pipefail
@@ -70,9 +70,12 @@ for type in uniprotkb uniref; do
     LEGACY_RUNNER_OUT="$golden_dir/reference" "$runner" headers "$type" "tests/Fixtures/reference/headers/$type.headers" \
         "/out/${type}_headers.tsv" 2>/dev/null
 done
+for obo in go-basic typedef_between_terms; do
+    LEGACY_RUNNER_OUT="$golden_dir/reference" "$runner" goterms "tests/Fixtures/reference/go/$obo.obo" "/out/go_${obo}.tsv"
+done
 
 # Checksum degli input e degli output: un golden rigenerato deve risultare identico.
-(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta peptides/isoelectric_cases.tsv libsvm/tiny.model libsvm/tiny.svm reference/release/* reference/headers/* \
-    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/cpc2_cases/isoelectric.tsv golden/libsvm/tiny.predictions golden/reference/release_versions.tsv golden/reference/*_headers.tsv golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
+(cd "$project_dir/tests/Fixtures" && sha256sum fasta/*_transcriptome.fasta fasta/format_cases.fasta fasta/example_subset_ids.txt fasta/orf_cases.fasta fasta/cpc2_orf_cases.fasta peptides/isoelectric_cases.tsv libsvm/tiny.model libsvm/tiny.svm reference/release/* reference/headers/* reference/go/* \
+    golden/*/*.tab golden/*/cpc2.tsv golden/*/cpc2_scaled.svm golden/*/cpc2_orf.tsv golden/cpc2_cases/codons.tsv golden/cpc2_cases/isoelectric.tsv golden/libsvm/tiny.predictions golden/reference/release_versions.tsv golden/reference/*_headers.tsv golden/reference/go_*.tsv golden/*/atgc_percentages.tsv golden/*/atgc_percentages.tsv.averages \
     golden/*/slices_*.tsv golden/format/bioperl_rewrite.fasta golden/subset/example_subset.fasta golden/genetic_code/table_1.tsv golden/translation/codons.tsv golden/*/translation/sequences.tsv golden/orf_cases/*.tab) > "$golden_dir/SHA256SUMS"
 echo "Golden written to $golden_dir"

@@ -43,6 +43,8 @@ Usage:
                                                  "riga<TAB>trId<TAB>seqId<TAB>db<TAB>descrizione<TAB>OS<TAB>GN<TAB>PE<TAB>SV",
                                                  uniref = "riga<TAB>seqId<TAB>descrizione<TAB>n<TAB>tax<TAB>repId";
                                                  \N dove il legacy non scrive un valore
+  legacy-runner goterms <obo> <out>              goTable scritta da createGOTable (LIB/db_creator.pm):
+                                                 "id<TAB>go_id<TAB>nome<TAB>namespace"
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -263,41 +265,19 @@ with open(sys.argv[2] + "/sequences.tsv", "w") as out:
         [[ $# -eq 3 ]] || usage
         work="$(mktemp -d)"
         cp "$2" "$work/headers.fasta"
-        # Le funzioni usano variabili lessicali del modulo e scrivono su MySQL: si carica il testo originale delle
-        # quattro sub in un package che fornisce quelle variabili, e si sostituiscono solo le chiamate al DB.
-        perl -I/legacy - "$1" "$work" "$3" <<'PERL'
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$1" "$work" "$3" <<'PERL'
 use strict;
 use warnings;
 my ($type, $work, $out) = @ARGV;
-open(my $src, '<', '/legacy/LIB/db_creator.pm') or die $!;
-my $code = do { local $/; <$src> };
-my $subs = '';
-for my $name (qw(createUniprotKBDB createUnirefDB addToHash sortAndWrite)) {
-    $code =~ /^(sub \Q$name\E\s*\{.*?)^=head2/ms or die "sub $name not found";
-    $subs .= $1;
-}
-package Harness;
-use LIB::files_management qw(extract_name delete_file);
-our ($info, $configHash, $dbDataFolder, $tempTableFolder, $database, $dbDownloaded);
-sub try_exec_command { return system($_[0]) == 0 ? 1 : 0 }
-sub table_2_db {}
-sub table_in_db_ok {}
-$dbDataFolder = $work;
-$tempTableFolder = "$work/tables";
-mkdir $tempTableFolder or die $!;
-$configHash = { tempTableFolder => $tempTableFolder, headParsNAValues => 'headParsNAValues.log', eraseFiles => 'NO', uniprotKBDB => 'unused' };
-$database = $dbDownloaded = 'harness';
-{
-    no strict 'vars';
-    eval "package Harness; our (\$info, \$configHash, \$dbDataFolder, \$tempTableFolder, \$database, \$dbDownloaded); $subs; 1" or die $@;
-}
+DbCreatorHarness::load($work, qw(createUniprotKBDB createUnirefDB addToHash sortAndWrite));
+my $tempTableFolder = "$work/tables";
 open(STDOUT, '>', '/dev/null');
 my ($main, @columns);
 if ($type eq 'uniprotkb') {
-    createUniprotKBDB('ftp://legacy/headers.fasta.gz', undef, undef, 'anonymous', 'anonymous', 'db_headers.txt');
+    Harness::createUniprotKBDB('ftp://legacy/headers.fasta.gz', undef, undef, 'anonymous', 'anonymous', 'db_headers.txt');
     ($main, @columns) = ('uniprotkb', [1], [2], [3, 'dbType'], [4, 'uniprotkbDescType'], [5, 'OSType'], [6, 'GNType'], [7, 'PEType'], [8, 'SVType']);
 } else {
-    createUnirefDB('ftp://legacy/headers.fasta.gz', undef, 'anonymous', 'anonymous', 'db_headers.txt');
+    Harness::createUnirefDB('ftp://legacy/headers.fasta.gz', undef, 'anonymous', 'anonymous', 'db_headers.txt');
     ($main, @columns) = ('uniref', [1], [2, 'unirefDescType'], [3], [4, 'taxType'], [5]);
 }
 my %dict;
@@ -319,6 +299,21 @@ while (my $row = <$in>) {
     print $result join("\t", @values), "\n";
 }
 PERL
+        rm -rf "$work"
+        ;;
+    goterms)
+        [[ $# -eq 2 ]] || usage
+        work="$(mktemp -d)"
+        cp "$1" "$work/go.obo"
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$work" <<'PERL' > /dev/null
+use strict;
+use warnings;
+my ($work) = @ARGV;
+DbCreatorHarness::load($work, qw(createGOTable));
+my $goTableHash = {};
+Harness::createGOTable('ftp://legacy/go.obo', \$goTableHash, 1);
+PERL
+        cp "$work/tables/goTable" "$2"
         rm -rf "$work"
         ;;
     shell)

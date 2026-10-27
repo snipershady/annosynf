@@ -1,0 +1,25 @@
+format-version: 1.2
+data-version: releases/2026-07-26
+
+[Term]
+id: GO:0000001
+name: mitochondrion inheritance
+namespace: biological_process
+alt_id: GO:0000999
+
+[Typedef]
+id: part_of
+name: part of
+is_transitive: true
+
+[Term]
+id: GO:0000002
+name: mitochondrial genome maintenance
+namespace: biological_process
+
+[Term]
+id: GO:0000005
+name: obsolete ribosomal chaperone activity
+namespace: molecular_function
+is_obsolete: true
+

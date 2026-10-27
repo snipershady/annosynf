@@ -1,0 +1,173 @@
+format-version: 1.2
+data-version: releases/2026-07-26
+subsetdef: chebi_ph7_3 "Rhea list of ChEBI terms representing the major species at pH 7.3."
+subsetdef: gocheck_do_not_annotate "Term not to be used for direct annotation"
+ontology: go
+property_value: dc:description "The Gene Ontology (GO) provides a framework and set of concepts for describing the functions of gene products from all organisms." xsd:string
+property_value: dc:title "Gene Ontology" xsd:string
+property_value: has_ontology_root_term GO:0003674
+property_value: has_ontology_root_term GO:0005575
+property_value: has_ontology_root_term GO:0008150
+property_value: owl:versionInfo "2026-07-26" xsd:string
+property_value: terms:license http://creativecommons.org/licenses/by/4.0/
+
+[Term]
+id: GO:0000001
+name: mitochondrion inheritance
+namespace: biological_process
+def: "The distribution of mitochondria, including the mitochondrial genome, into daughter cells after mitosis or meiosis, mediated by interactions between mitochondria and the cytoskeleton." [GOC:mcc, PMID:10873824, PMID:11389764]
+synonym: "mitochondrial inheritance" EXACT []
+is_a: GO:0048308 ! organelle inheritance
+is_a: GO:0048311 ! mitochondrion distribution
+
+[Term]
+id: GO:0000075
+name: cell cycle checkpoint signaling
+namespace: biological_process
+alt_id: GO:0031576
+alt_id: GO:0071779
+alt_id: GO:0072395
+alt_id: GO:0072404
+alt_id: GO:0072407
+def: "A signaling process that controls cell cycle progression by monitoring the integrity of specific cell cycle events. A cell cycle checkpoint begins with detection of deficiencies or defects and ends with signal transduction." [GOC:mtg_cell_cycle]
+comment: This term should not be used in direct manual annotation as it should always be possible to minimally designate mitotic or meiotic checkpoint, and usually to additionally specify the checkpoint (i.e mitotic spindle assembly checkpoint, mitotic DNA damage checkpoint etc). Note also that the effector processes are not part of the checkpoint but are positively regulated by the checkpoint signaling and should not be annotated here.
+subset: gocheck_do_not_annotate
+synonym: "cell cycle checkpoint" EXACT []
+synonym: "G1/S checkpoint" NARROW []
+synonym: "G1/S transition checkpoint" NARROW []
+synonym: "G2/M checkpoint" NARROW []
+synonym: "G2/M transition checkpoint" NARROW []
+synonym: "signal transduction involved in cell cycle checkpoint" EXACT []
+synonym: "signal transduction involved in G2/M transition checkpoint" EXACT []
+xref: Reactome:R-HSA-69620 "Cell Cycle Checkpoints"
+xref: Wikipedia:Cell_cycle_checkpoint
+is_a: GO:0035556 ! intracellular signal transduction
+is_a: GO:1901988 ! negative regulation of cell cycle phase transition
+
+[Term]
+id: GO:0000124
+name: SAGA complex
+namespace: cellular_component
+alt_id: GO:0000125
+alt_id: GO:0030914
+def: "A SAGA-type histone acetyltransferase complex that deubiquitinates H2A and/or H2B. This complex is organized into several functional submodules: a structural core including the activator binding module and consisting of ADA1 or a homolog, members of the SPT and TAF protein families as well as promotor recruitment factor TRRAP/TRA1, a histone acetyltransferase (HAT) module consisting of GCN5/KAT2A or PCAF/KAT2B, ADA2, ADA3/NGG1, and SGF29 or homologues thereof, a histone deubiquitinase (DUB) module consisting of ATXN7/SGF73, ATXN7L3/SGF11, ENY2/SUS1 and USP22/UBP8 or homologues thereof, and in some taxa a splicing module consisting of SF3B3 and SF3B5 or homologues thereof (not in fungi). In budding yeast also contains Spt8 which distinguishes it from SAGA-like (SLIK) complex (GO:0046695)." [PMID:10637607, PMID:17337012, PMID:19056896, PMID:20838651, PMID:33004486]
+synonym: "PCAF complex" NARROW []
+synonym: "PCAF histone acetylase-associated complex" NARROW []
+synonym: "Spt-Ada-Gcn5-acetyltransferase complex" EXACT []
+synonym: "SPT3-TAF9-GCN5 acetylase complex" RELATED [GOC:rl, PMID:18838386]
+synonym: "SPT3-TAF9-PCAF acetylase complex" NARROW [PMID:18838386]
+synonym: "STAGA coactivator complex" RELATED []
+synonym: "STAGA complex" RELATED [PMID:32616828, PMID:33004486, PMID:34112237]
+is_a: GO:0070461 ! SAGA-type complex
+is_a: GO:1905368 ! peptidase complex
+
+[Term]
+id: GO:0000161
+name: obsolete osmosensory signaling MAPK cascade
+namespace: biological_process
+alt_id: GO:0000167
+alt_id: GO:0000168
+alt_id: GO:0000169
+alt_id: GO:0000173
+alt_id: GO:0007233
+def: "OBSOLETE. A MAPK cascade that starts with the activation of a Ssk2/Win1 family MAP3K, which activates a Pbs2/Wis1 family MAP2K, resulting in the activation of a Hog1/Sty1 family MAPK. Hog1 then translocates from the cytosol into the nucleus where it affects the expression of a large number of genes. This cascade is activated by hyperosmolarity or other abiotic stresses and results in cellular responses such as cell cycle arrest." [PMID:17604854, PMID:32794416, PMID:9561267]
+comment: This term was obsoleted because it represents the same process as p38MAPK cascade ; GO:0038066.
+synonym: "activation of MAPK activity involved in osmosensory signaling pathway" NARROW []
+synonym: "activation of MAPKK activity during osmolarity sensing" NARROW []
+synonym: "activation of MAPKK activity involved in osmosensory signaling pathway" NARROW []
+synonym: "activation of MAPKKK activity during osmolarity sensing" NARROW []
+synonym: "activation of MAPKKK activity involved in osmosensory signaling pathway" NARROW []
+synonym: "activation of Pbs2 kinase" NARROW []
+synonym: "High Osmolarity Glycerol (HOG) MAPK pathway" NARROW [PMID:20880736]
+synonym: "Hog1 MAPK pathway" NARROW [PMID:20880736]
+synonym: "Hog1/Sty1 stress-activated MAPK cascade" NARROW []
+synonym: "inactivation of MAPK activity involved in osmosensory signaling pathway" NARROW []
+synonym: "MAPK cascade involved in osmosensory signaling pathway" EXACT []
+synonym: "MAPKKK cascade during osmolarity sensing" EXACT []
+synonym: "MAPKKK cascade involved in osmosensory signaling pathway" EXACT [GOC:signaling]
+synonym: "MAPKKK cascade involved in osmosensory signalling pathway" EXACT [GOC:mah]
+synonym: "osmolarity sensing, activation of MAP kinase kinase activity" NARROW []
+synonym: "osmolarity sensing, activation of MAP kinase kinase kinase activity" NARROW []
+synonym: "osmolarity sensing, activation of MAPK activity" NARROW []
+synonym: "osmolarity sensing, activation of MAPKK activity" NARROW []
+synonym: "osmolarity sensing, activation of MAPKKK activity" NARROW []
+synonym: "osmolarity sensing, MAPKKK cascade" EXACT []
+synonym: "termination of MAPK activity during osmolarity sensing" NARROW []
+is_obsolete: true
+replaced_by: GO:0038066
+
+[Term]
+id: GO:0003674
+name: molecular_function
+namespace: molecular_function
+alt_id: GO:0005554
+def: "A molecular process that can be carried out by the action of a single macromolecular machine, usually via direct physical interactions with other molecular entities. Function in this sense denotes an action, or activity, that a gene product (or a complex) performs." [GOC:pdt]
+comment: Note that, in addition to forming the root of the molecular function ontology, this term is recommended for the annotation of gene products whose molecular function is unknown. When this term is used for annotation, it indicates that no information was available about the molecular function of the gene product annotated as of the date the annotation was made; the evidence code 'no data' (ND), is used to indicate this. Despite its name, this is not a type of 'function' in the sense typically defined by upper ontologies such as Basic Formal Ontology (BFO). It is instead a BFO:process carried out by a single gene product or complex.
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_plant
+subset: goslim_yeast
+synonym: "molecular function" EXACT []
+
+[Term]
+id: GO:0090430
+name: caffeoyl-CoA: alcohol caffeoyl transferase activity
+namespace: molecular_function
+def: "Catalysis of the reaction: caffeoyl-CoA + a saturated primary alcohol = an alkyl caffeate + CoA." [GOC:pz]
+is_a: GO:0016747 ! acyltransferase activity, transferring groups other than amino-acyl groups
+
+[Term]
+id: GO:0102593
+name: obsolete UDP-glucose: N-methylanthranilate glucosyltransferase activity
+namespace: molecular_function
+def: "OBSOLETE. Catalysis of the reaction: N-methylanthranilate + UDP-alpha-D-glucose = N-methylanthraniloyl-beta-D-glucopyranose + UDP." [GOC:pz]
+comment: This term was obsoleted because it represents a specific substrate.
+is_obsolete: true
+
+[Term]
+id: GO:7770088
+name: endoplasmic reticulum-endolysosomal membrane contact site
+namespace: cellular_component
+def: "A membrane contact site between the endoplasmic reticulum membrane and the membrane of an organelle of the endolysosomal system, such as an endosome or lysosome." [PMID:31678515]
+synonym: "ER-endolysosomal membrane contact site" EXACT []
+is_a: GO:0044232 ! organelle membrane contact site
+
+[Typedef]
+id: has_ontology_root_term
+name: has ontology root term
+namespace: external
+xref: IAO:0000700
+is_metadata_tag: true
+is_class_level: true
+
+[Typedef]
+id: negatively_regulates
+name: negatively regulates
+namespace: external
+xref: RO:0002212
+is_a: regulates ! regulates
+
+[Typedef]
+id: part_of
+name: part of
+namespace: external
+xref: BFO:0000050
+is_transitive: true
+
+[Typedef]
+id: positively_regulates
+name: positively regulates
+namespace: external
+xref: RO:0002213
+holds_over_chain: negatively_regulates negatively_regulates
+is_a: regulates ! regulates
+
+[Typedef]
+id: regulates
+name: regulates
+namespace: external
+xref: RO:0002211
+is_transitive: true
+

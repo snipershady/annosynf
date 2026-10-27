@@ -259,8 +259,11 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   Golden del parsing originale di `createUniprotKBDB`/`createUnirefDB` (comando `headers` del legacy-runner) su
   header reali 2026_03 e nel formato pre-2017/2018. Correzioni in più rispetto alla spec: gene name intero
   anche con spazi (`GN=MGF 110-1L`), nessun ID/descrizione ripetuti dall'header precedente.
-- [ ] **4.3 `OboParser`**: term + `alt_id`, obsoleti marcati, ultima stanza non persa, `[Typedef]` ignorato
-  (§A.12.3).
+- [x] **4.3 `OboParser`**: term + `alt_id`, obsoleti marcati, ultima stanza non persa, `[Typedef]` ignorato
+  (§A.12.3). `GoTerm`, `GoNamespace`, `dataVersion()` per `source_versions.go`. Golden della goTable di
+  `createGOTable` (comando `goterms`; il legacy-runner ha ora `DbCreatorHarness.pm` per eseguire le sub di
+  `db_creator.pm`). Sul `go-basic.obo` completo (2026-07-26, 48 340 term, 0,75 s, 5 MB) le sole differenze dal
+  legacy sono quelle dichiarate: 7 nomi con `": "` troncati dal legacy e l'ultimo term perso.
 - [ ] **4.4 `EnzymeDatParser`** (EC, descrizione ripulita, accession dai `DR`, versione dal `CC`).
 - [ ] **4.5 `PathwayTxtParser`** (livelli con trim, niente piè di pagina come pathway: §A.12.5).
 - [ ] **4.6 `CddIdParser`** e **`Pfam2GoParser`** (nessun GO sul dominio precedente: §A.12.4).
@@ -356,6 +359,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.2, prossimo 4.3 (`OboParser`). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.3, prossimo 4.4 (`EnzymeDatParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
