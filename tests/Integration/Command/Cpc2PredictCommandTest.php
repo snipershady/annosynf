@@ -26,6 +26,7 @@ use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\GeneticCode;
 use App\Infrastructure\CodingPotential\NativeCpc2Predictor;
 use App\Infrastructure\Storage\FileNotReadableException;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\Cpc2OutputComparison;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -58,6 +59,7 @@ use Symfony\Component\Console\Command\Command;
 #[UsesClass(OrfIntegrity::class)]
 #[UsesClass(PredictCodingPotential::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class Cpc2PredictCommandTest extends KernelTestCase
 {
     public function testTheOutputIsTheOneOfCpc2(): void

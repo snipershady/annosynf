@@ -10,6 +10,7 @@ use App\Domain\Sequence\AlphabetDetector;
 use App\Domain\Sequence\FastaLocation;
 use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\GoldenFixtures;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaReader::class)]
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class AlphabetDetectionTest extends TestCase
 {
     public function testTheReferenceTranscriptomesAreDnaThroughout(): void

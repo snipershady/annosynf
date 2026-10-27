@@ -21,6 +21,7 @@ use App\Domain\CodingPotential\OrfIntegrity;
 use App\Domain\Sequence\GeneticCode;
 use App\Infrastructure\CodingPotential\NativeCpc2Predictor;
 use App\Infrastructure\Storage\FileNotReadableException;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -44,6 +45,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 #[UsesClass(LibsvmScaler::class)]
 #[UsesClass(OrfIntegrity::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class NativeCpc2PredictorTest extends KernelTestCase
 {
     public function testTheContainerPredictsWithTheVersionedModel(): void

@@ -6,6 +6,7 @@ namespace App\Tests\Golden;
 
 use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\Cpc2Row;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(FastaReader::class)]
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class FastaReaderParityTest extends TestCase
 {
     /**

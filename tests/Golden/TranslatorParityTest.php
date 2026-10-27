@@ -9,6 +9,7 @@ use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\GeneticCode;
 use App\Domain\Sequence\Translator;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\GoldenComparison;
 use App\Tests\Support\Golden\GoldenFixtures;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(GeneticCode::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class TranslatorParityTest extends TestCase
 {
     public function testEveryIupacCodonMatchesModTranslate(): void

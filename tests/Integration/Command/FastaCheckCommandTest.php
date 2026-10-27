@@ -23,6 +23,7 @@ use App\Domain\Sequence\InvalidFastaException;
 use App\Domain\Sequence\IssueSeverity;
 use App\Domain\Sequence\SequenceComposition;
 use App\Infrastructure\Storage\FileNotReadableException;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\GoldenFixtures;
 use App\Tests\Support\TemporaryDirectory;
@@ -54,6 +55,7 @@ use Symfony\Component\Filesystem\Filesystem;
 #[UsesClass(IssueSeverity::class)]
 #[UsesClass(SequenceComposition::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class FastaCheckCommandTest extends KernelTestCase
 {
     private TemporaryDirectory $directory;

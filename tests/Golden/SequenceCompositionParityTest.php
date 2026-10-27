@@ -9,6 +9,7 @@ use App\Domain\Sequence\CompositionSummary;
 use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\SequenceComposition;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\AtgcRow;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -29,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaReader::class)]
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class SequenceCompositionParityTest extends TestCase
 {
     /** Il legacy stampa i numeri con 15 cifre significative. */

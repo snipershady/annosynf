@@ -13,6 +13,7 @@ use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\FastaValidationReport;
 use App\Domain\Sequence\FastaValidator;
 use App\Domain\Sequence\IssueSeverity;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\GoldenFixtures;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -34,6 +35,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaValidationReport::class)]
 #[UsesClass(IssueSeverity::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class FastaValidationTest extends TestCase
 {
     public function testTheReferenceTranscriptomesHaveNoErrors(): void

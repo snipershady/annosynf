@@ -309,9 +309,17 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   (Last-Modified). Mirror EBI ed Expasy: stessi file (sha256), ETag diversi, quindi un cambio di mirror riparte da
   zero. Cambiamenti rispetto al legacy: `pathway.txt`/`speclist.txt` dall'albero della release invece di
   `www.uniprot.org/docs/`, `pfam2go` dal percorso `current.geneontology.org/ontology/external2go/`.
-- [ ] **5.3 Decompressione**: gz in streaming (`compress.zlib://`); per `Cdd_LE.tar.gz` un estrattore tar
+- [x] **5.3 Decompressione**: gz in streaming (`compress.zlib://`); per `Cdd_LE.tar.gz` un estrattore tar
   in streaming (header da 512 byte) invece di `PharData`, che su archivi da GB non è adatto. Da
   verificare con un archivio reale.
+  Porta `ArchiveExtractor` (`gunzip`, `untar`), adapter `StreamingArchiveExtractor` con `GzipReader`, `ByteStream`
+  e `TarHeader` in `src/Infrastructure/Storage`. Emerso: `compress.zlib://` legge in silenzio un gzip troncato o
+  senza CRC come completo, quindi `GzipReader` usa `inflate_*` e verifica la fine di ogni membro; anche
+  `TextFileReader` ora lo usa (stessa velocità). Tar: ustar/GNU/pax, solo file e directory, niente percorsi fuori
+  dalla destinazione, blocco finale obbligatorio. Fixture `tests/Fixtures/archives/` create con GNU tar 1.35.
+  Verificato sul `Cdd_LE.tar.gz` reale (1,9 GB, CDD v3.22): 349 file identici a GNU tar, 12 MB di memoria, DB
+  leggibile da `blastdbcmd` e `rpstblastn`. Il CDD 2026 è a volumi (`Cdd.pal` + `Cdd.NN.*`) e non ha `Cdd.rps`,
+  che il legacy usa per capire se è già estratto (§A.7.11).
 - [ ] **5.4 Catalogo delle sorgenti** (emerso in 5.2): gli URL della tabella di §B.10 in configurazione
   (`annosynf.sources`, con la variante UniRef nel percorso) invece che solo in CLAUDE.md, più un comando
   `annosynf:sources:check` (HEAD di ogni sorgente e dei mirror, come `annosynf:blast:check`) per ripetere questa
@@ -402,6 +410,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
-reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5 in corso: 5.1 (`SourceDownloader`) e 5.2
-(URL HTTPS verificati) fatti; prossimo 5.3 (decompressione gz e tar in streaming). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5: 5.1–5.3 fatti (download con ripresa,
+URL HTTPS verificati, decompressione gz/tar in streaming). Resta 5.4 (catalogo delle sorgenti), da fare con la
+fase 6; prossimo passo: fase 6 (persistenza e import delle release, M3). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

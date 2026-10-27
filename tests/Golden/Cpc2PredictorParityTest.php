@@ -22,6 +22,7 @@ use App\Domain\CodingPotential\OrfIntegrity;
 use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\GeneticCode;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\Cpc2OutputComparison;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -57,6 +58,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(LibsvmScaler::class)]
 #[UsesClass(OrfIntegrity::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class Cpc2PredictorParityTest extends TestCase
 {
     /**

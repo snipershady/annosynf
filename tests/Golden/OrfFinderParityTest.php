@@ -14,6 +14,7 @@ use App\Domain\Sequence\OrfFinder;
 use App\Domain\Sequence\OrfMode;
 use App\Domain\Sequence\ReadingFrame;
 use App\Domain\Sequence\Translator;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\Dna2PepRow;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -40,6 +41,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(OrfMode::class)]
 #[UsesClass(ReadingFrame::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 #[UsesClass(Translator::class)]
 final class OrfFinderParityTest extends TestCase
 {

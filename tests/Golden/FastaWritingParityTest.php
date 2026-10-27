@@ -10,6 +10,7 @@ use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
 use App\Domain\Sequence\FastaSlicer;
 use App\Domain\Sequence\FastaSubset;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\GoldenFixtures;
 use Generator;
@@ -29,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaReader::class)]
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class FastaWritingParityTest extends TestCase
 {
     public function testRecordsAreWrittenByteForByteLikeBioPerl(): void

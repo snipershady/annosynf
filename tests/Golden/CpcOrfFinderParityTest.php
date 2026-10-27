@@ -9,6 +9,7 @@ use App\Domain\CodingPotential\CpcOrfFinder;
 use App\Domain\CodingPotential\OrfIntegrity;
 use App\Domain\Sequence\FastaReader;
 use App\Domain\Sequence\FastaRecord;
+use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Tests\Support\Golden\CpcOrfRow;
 use App\Tests\Support\Golden\GoldenComparison;
@@ -29,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(FastaRecord::class)]
 #[UsesClass(OrfIntegrity::class)]
 #[UsesClass(TextFileReader::class)]
+#[UsesClass(GzipReader::class)]
 final class CpcOrfFinderParityTest extends TestCase
 {
     /**
