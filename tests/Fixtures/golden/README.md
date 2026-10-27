@@ -2,7 +2,7 @@
 
 Output dei programmi esterni e di alcune funzioni di Annocript 2.0.1 sui FASTA di `tests/Fixtures/fasta/`, prodotti **una volta**
 dal container `legacy-runner` (TODO.md step 0.2). Sono il riferimento dei test di parità dei port PHP:
-`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `FickettScore` contro CPC2 (step 3.3), `IsoelectricPoint` contro Biopython (step 3.4), `Libsvm*` contro libsvm (step 3.5), `Cpc2Predictor` contro CPC2 (step 3.6), `SequenceComposition` contro
+`OrfFinder` contro dna2pep (step 2.5), `CpcOrfFinder` contro FindCDS di CPC2 (step 3.1), `Cpc2Translator` contro Biopython (step 3.2), `FickettScore` contro CPC2 (step 3.3), `IsoelectricPoint` contro Biopython (step 3.4), `Libsvm*` contro libsvm (step 3.5), `Cpc2Predictor` contro CPC2 (step 3.6), `ReleaseNoteParser` contro `getDBVersion` (step 4.1), `SequenceComposition` contro
 `extractPercentages` (step 1.4), `FastaFormatter`/`FastaSlicer`/`FastaSubset` contro Bio::SeqIO, `create_slices`
 e `faSomeRecords` (step 1.5), `GeneticCode` contro la tabella di dna2pep (step 2.1), `Translator` contro mod_translate (step 2.2), `OrfFinder` e `Dna2PepLineFormatter` contro dna2pep, campo per campo e byte per byte (step 2.3–2.5). Dopo la fase 11 restano come
 dati di regressione congelati: nessun test li rigenera né richiede il container.
@@ -17,6 +17,7 @@ dati di regressione congelati: nessun test li rigenera né richiede il container
 | `cpc2_cases/cpc2_orf.tsv`, `cpc2.tsv`, `cpc2_scaled.svm` | gli stessi file di CPC2 sui casi limite di `fasta/cpc2_orf_cases.fasta` (pareggi tra frame, ATG interni, ORF senza stop, IUPAC, minuscole e U, nessun ATG; per il Fickett una base, molte N, omopolimero) | una per sequenza |
 | `cpc2_cases/codons.tsv` | `mRNA_translate` di CPC2 (Biopython 1.76, `Seq.translate()`) per tutti i 4913 codoni su `ACGTRYMKWSBDHVNX-`; `!` dove Biopython solleva TranslationError (comando `cpc2codons`) | 4913 |
 | `cpc2_cases/isoelectric.tsv` | `ProtParam.ProteinAnalysis(p).isoelectric_point()` di Biopython 1.76 sui peptidi di `peptides/isoelectric_cases.tsv` (terminali, residui carichi, stop interni, casi casuali): `nome, repr, str` (comando `isoelectric`) | 80 |
+| `reference/release_versions.tsv` | `getDBVersion` di `LIB/annocript_management.pm` sui file di `reference/release/` (`reldate.txt` e `uniref*.release_note` reali di UniProt 2026_03, varianti CRLF e casi limite): `file, tipo, versione`, `!` dove il legacy si ferma (comando `dbversion`) | 11 |
 | `libsvm/tiny.predictions` | `svm-predict -b 1` di libsvm 3.18 sul modello minimo `libsvm/tiny.model` (etichette 0 1, un vettore di supporto senza feature) e sui vettori di `libsvm/tiny.svm` (comando `svmpredict`) | intestazione + 8 |
 | `<set>/cpc2_scaled.svm` | vettori delle feature di CPC2 dopo `svm-scale -r cpc2.range` | una per sequenza |
 | `<set>/atgc_percentages.tsv` | `extractPercentages` di `LIB/output_and_stats.pm` (il file `ATGC_Percentages.txt`) | intestazione + una per sequenza |

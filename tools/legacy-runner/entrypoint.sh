@@ -34,6 +34,9 @@ Usage:
   legacy-runner translation <fasta> <outdir>     traduzioni di mod_translate (dna2pep) con il codice 1:
                                                  <outdir>/codons.tsv per tutti i 3375 codoni IUPAC e
                                                  <outdir>/sequences.tsv per le sequenze del FASTA (frame 1)
+  legacy-runner dbversion <out> <file>...        versione della release letta da getDBVersion di
+                                                 LIB/annocript_management.pm (reldate* → uniprotkb, altrimenti
+                                                 uniref): "file<TAB>tipo<TAB>versione", "!" se il legacy si ferma
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -231,6 +234,24 @@ with open(sys.argv[2] + "/sequences.tsv", "w") as out:
             chunks.append(line)
     flush()
 ' "$fasta" "$outdir")
+        ;;
+    dbversion)
+        [[ $# -ge 2 ]] || usage
+        out="$1"
+        shift
+        # getDBVersion scarica il file solo se manca: con il file già nella cartella lo legge e basta.
+        for file in "$@"; do
+            type=uniref
+            [[ "$(basename "$file")" == reldate* ]] && type=uniprotkb
+            # Niente regex con gruppi qui: se la regex di getDBVersion fallisce, $2 resta quello dell'ultimo
+            # match riuscito e il legacy restituirebbe un valore di questo script.
+            perl -I/legacy -MLIB::annocript_management -MFile::Basename -e '
+                my ($file, $type) = @ARGV;
+                my ($name, $dir) = (basename($file), dirname($file));
+                my $version = eval { LIB::annocript_management::getDBVersion("ftp://legacy/$name", $dir, "anonymous", "anonymous", $type) };
+                print join("\t", $name, $type, defined $version ? $version : "!"), "\n";
+            ' "$(realpath "$file")" "$type" 2> /dev/null | grep -v '^File '
+        done > "$out"
         ;;
     shell)
         exec bash

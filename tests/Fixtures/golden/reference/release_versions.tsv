@@ -1,0 +1,11 @@
+reldate.txt	uniprotkb	2026_03
+reldate_blank_first_line.txt	uniprotkb	!
+reldate_crlf.txt	uniprotkb	2026_03
+reldate_malformed_version.txt	uniprotkb	2026_03 of 2026
+uniref100.release_note	uniref	2026_03
+uniref50.release_note	uniref	2026_03
+uniref90.release_note	uniref	2026_03
+uniref90_crlf.release_note	uniref	2026_03
+uniref90_extra_field.release_note	uniref	2026_03, 02-Sep-2026
+uniref90_no_date.release_note	uniref	!
+uniref90_two_releases.release_note	uniref	2026_03

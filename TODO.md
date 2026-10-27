@@ -248,7 +248,11 @@ intermedi di 0.2.
 
 Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i casi patologici).
 
-- [ ] **4.1 `ReleaseNoteParser`** (`reldate.txt`, `uniref*.release_note`).
+- [x] **4.1 `ReleaseNoteParser`** (`reldate.txt`, `uniref*.release_note`): `src/Domain/Reference`
+  (`ReleaseNoteParser`, `ReleaseNote` con versione, data, variante UniRef e numero di cluster, enum
+  `ReleaseType`/`UnirefVariant`). Golden di `getDBVersion` (comando `dbversion` del legacy-runner) sui file reali
+  di UniProt 2026_03 e su casi limite; correzioni dichiarate in §A.12.21 (versione validata `YYYY_MM`, riga
+  cercata in tutto il file, data UniRef facoltativa, due versioni = errore).
 - [ ] **4.2 `UniProtHeaderParser`** (organismo completo, `OX` salvato: corregge §A.12.1) e
   **`UniRefHeaderParser`** (`Tax=` senza `TaxID=`: §A.12.2).
 - [ ] **4.3 `OboParser`**: term + `alt_id`, obsoleti marcati, ultima stanza non persa, `[Typedef]` ignorato
@@ -348,6 +352,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Prossimo: fase 4 (parser dei dati di riferimento, M2). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatto 4.1, prossimo 4.2 (`UniProtHeaderParser`,
+`UniRefHeaderParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
