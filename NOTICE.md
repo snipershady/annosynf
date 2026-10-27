@@ -15,9 +15,11 @@ annosynf è una riscrittura in PHP, modificata, delle opere seguenti.
   Algoritmi, euristiche e formati di output della pipeline.
 - **dna2pep 1.1** — Copyright 2006 Rasmus Wernersson, Technical University of Denmark. GNU GPL versione 2
   o successiva. Port nativo della ricerca degli ORF (`src/Domain/Sequence`).
-- **CPC2-beta** (Coding Potential Calculator 2), Center for Bioinformatics, Peking University. Port nativo
-  del calcolo del potenziale codificante (`src/Domain/CodingPotential`) e modello SVM in `resources/cpc2/`.
-  La licenza del modello è da verificare prima di distribuire il software.
+- **CPC2** (Coding Potential Calculator 2) — Yu-Jian Kang et al., Center for Bioinformatics, Peking
+  University. GNU GPL versione 3 (repository ufficiale https://github.com/gao-lab/CPC2_standalone). Port
+  nativo del calcolo del potenziale codificante (`src/Domain/CodingPotential`, da CPC2-beta come lo usa
+  Annocript); il modello SVM in `resources/cpc2/` (`cpc2.model`, `cpc2.range`) è identico al byte a quello di
+  `data/` nel repository ufficiale.
 - **LIBSVM 3.18** — Copyright (c) 2000-2014 Chih-Chung Chang e Chih-Jen Lin. Licenza BSD a 3 clausole
   (compatibile con GPL-3). Port della predizione con probabilità (`svm-scale -r`, kernel RBF, sigmoide di
   Platt, `multiclass_probability`) in `src/Domain/CodingPotential/Libsvm*`.

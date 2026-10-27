@@ -77,8 +77,8 @@ può dimostrare la parità (§B.12).
   nell'ordine del FASTA e gli invarianti dei formati; gli helper hanno test unitari, casi malformati inclusi.
 - [x] **0.5 Licenza del progetto**: **GPL-3.0-or-later** (`composer.json`, `LICENSE`, `NOTICE.md`), la più
   permissiva compatibile con Annocript (GPL-3.0-or-later) e con dna2pep (GPL-2.0-or-later).
-- [?] **0.6 Licenza del modello CPC2** (`cpc2.model`/`cpc2.range`, §B.8.2): da verificare e citare in
-  `NOTICE.md` prima di distribuire il software.
+- [x] **0.6 Licenza del modello CPC2** (`cpc2.model`/`cpc2.range`, §B.8.2): identici al byte a quelli di
+  `gao-lab/CPC2_standalone`, il repository ufficiale di CPC2, sotto GPL-3.0 dal 2018; citati in `NOTICE.md`.
 
 ## Fase 1 — Dominio sequenze (M1) · elimina `Bio::SeqIO`, `faSomeRecords`, `grep -c`, `cleanHeader`
 
@@ -304,8 +304,9 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `reference_blast_db`, `organism_set*` (ORM) e delle tabelle `ref_*` partizionate (SQL esplicito).
 - [ ] **6.2 `MysqlLoadDataBulkLoader`**: `LOAD DATA LOCAL INFILE` via `Pdo\Mysql` limitato a `var/tmp/bulk`.
   Prerequisito: `local_infile=ON` sul server (oggi è `0`).
-- [?] **Descrizione in `ref_enzyme`** (da decidere a 6.3): testo di ENZYME (`EnzymeEntry::description()`) o
-  forma ripulita del legacy; l'export compatibile ha bisogno della seconda (le righe `DE` unite da due spazi).
+- [x] **Descrizione in `ref_enzyme`** (deciso il 2026-10-27): due colonne, `description` = testo di ENZYME
+  (`EnzymeEntry::description()`, per la UI) e `legacy_description` = `EnzymeEntry::legacyDescription()` (per
+  l'export compatibile).
 - [ ] **6.3 Task di import set-based** (staging + `INSERT … SELECT … JOIN`), idempotenti, con workflow
   Release e Messenger; lock per release.
 - [ ] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
@@ -330,7 +331,7 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `PathwayLevels`** in `src/Domain/Annotation`, con test di tutte le combinazioni. Attenzione: Annocript
   legge la riga "NO ORF FOUND" di dna2pep come ORF di lunghezza 0 (`+`, frame 0), quindi la condizione 6
   ("ORF presente e ≤ NCORFLength") è vera anche senza ORF; `OrfFinder::find()` restituisce null in quel
-  caso: decidere se replicare (parità del golden `ann_out`) o correggere e dichiararlo.
+  caso. Deciso (2026-10-27): si replica, nessun ORF = lunghezza 0 e condizione 6 vera.
 - [ ] **8.2 `BuildAnnotations`** a batch → `transcript_annotation` + junction GO/enzimi/pathway.
 - [ ] **8.3 Golden `ann_out`**: legacy eseguito nel container su una mini-release ridotta; confronto cella
   per cella, con le colonne toccate dalle correzioni §A.12 elencate esplicitamente.
@@ -380,7 +381,7 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ## Prossimo passo consigliato
 
-Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
+Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
 reali del 2026 salvo le correzioni dichiarate (§A.12). Prossimo: fase 5 (download e decompressione, M2), a
 partire da 5.1 (`SourceDownloader`). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
