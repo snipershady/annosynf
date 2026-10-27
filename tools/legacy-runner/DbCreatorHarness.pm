@@ -37,6 +37,14 @@ sub load {
         or die $@;
 }
 
+# Hash accession → id interno (da legare con tie) in cui ogni accession esiste e ha per id sé stessa: i mapping
+# scritti dal legacy diventano accession → id degli enzimi o dei pathway.
+package DbCreatorHarness::EveryAccession;
+
+sub TIEHASH { return bless {}, shift }
+sub FETCH { return $_[1] }
+sub EXISTS { return 1 }
+
 package Harness;
 
 use strict;

@@ -49,6 +49,9 @@ Usage:
                                                  "id<TAB>EC<TAB>descrizione", <out>.mapping = "accession<TAB>id
                                                  degli enzimi" (ogni accession dei DR esiste nel DB),
                                                  <out>.version = riga di db_versions.txt
+  legacy-runner pathways <pathway.txt> <out>     createPathwayTableAndMapping (LIB/db_creator.pm): <out> =
+                                                 pathwaysTable "id<TAB>descrizione", <out>.mapping = "accession<TAB>id
+                                                 dei pathway" (ogni accession esiste nel DB)
   legacy-runner shell                            shell interattiva
 USAGE
     exit 64
@@ -329,18 +332,10 @@ use strict;
 use warnings;
 my ($work) = @ARGV;
 
-# Tabella accession → id interno in cui ogni accession esiste e ha per id sé stessa: il mapping risultante è
-# accession → enzimi.
-package EveryAccession;
-sub TIEHASH { return bless {}, shift }
-sub FETCH { return $_[1] }
-sub EXISTS { return 1 }
-
-package main;
 DbCreatorHarness::load($work, qw(extractEnzimeIdsFile createEnzymeTable));
 $Harness::configHash->{db_versions_file} = "$work/db_versions.txt";
 $Harness::configHash->{useHugeRAM} = 'YES';
-tie my %accessions, 'EveryAccession';
+tie my %accessions, 'DbCreatorHarness::EveryAccession';
 my $mapping = {};
 Harness::createEnzymeTable('ftp://legacy/enzyme.dat', \$mapping, 'uniprotkb', \%accessions);
 open(my $out, '>', "$work/mapping") or die $!;
@@ -349,6 +344,28 @@ PERL
         cp "$work/tables/enzymeTable" "$2"
         cp "$work/mapping" "$2.mapping"
         cp "$work/db_versions.txt" "$2.version"
+        rm -rf "$work"
+        ;;
+    pathways)
+        [[ $# -eq 2 ]] || usage
+        work="$(mktemp -d)"
+        cp "$1" "$work/pathway.txt"
+        perl -I/legacy -I/usr/local/lib/legacy-runner -MDbCreatorHarness - "$work" <<'PERL' > /dev/null
+use strict;
+use warnings;
+my ($work) = @ARGV;
+DbCreatorHarness::load($work, qw(createPathwayTableAndMapping));
+# Valori di CONFIGURATION/program_config.txt.
+$Harness::configHash->{pwFileLinesToJump} = 12;
+$Harness::configHash->{useHugeRAM} = 'YES';
+tie my %accessions, 'DbCreatorHarness::EveryAccession';
+my $mapping = {};
+Harness::createPathwayTableAndMapping('ftp://legacy/pathway.txt', \$mapping, 'uniprotkb', \%accessions);
+open(my $out, '>', "$work/mapping") or die $!;
+print $out join("\t", $_, $mapping->{$_}{p}), "\n" for sort keys %$mapping;
+PERL
+        cp "$work/tables/pathwaysTable" "$2"
+        cp "$work/mapping" "$2.mapping"
         rm -rf "$work"
         ;;
     shell)

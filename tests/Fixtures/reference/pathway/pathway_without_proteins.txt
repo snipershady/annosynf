@@ -1,0 +1,28 @@
+--------------------------------------------------------------------------------
+        UniProt - Swiss-Prot Protein Knowledgebase
+        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland
+        European Bioinformatics Institute (EBI); Hinxton, United Kingdom
+        Protein Information Resource (PIR); Washington DC, USA
+--------------------------------------------------------------------------------
+
+Description: PATHWAY comments: index
+Name:        pathway.txt
+Release:     2026_03 of 02-Sep-2026
+
+--------------------------------------------------------------------------------
+
+
+Amine and polyamine biosynthesis; pathway without proteins.
+
+Amino-acid biosynthesis; L-lysine biosynthesis via DAP pathway; step 1/4.
+     DAPA_ECOLI  (P0A6L2)    , DAPA_BACSU  (Q04796)    , DAPA_ECOLI  (P0A6L2)    
+
+Amino-acid biosynthesis; another pathway without proteins.
+
+Amino-acid biosynthesis; L-lysine biosynthesis via DAP pathway; step 2/4.
+     DAPB_ECOLI  (P04036)    , DAPA_BACSU  (Q04796)    
+
+--------------------------------------------------------------------------------
+Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+Distributed under the Creative Commons Attribution (CC BY 4.0) License
+--------------------------------------------------------------------------------

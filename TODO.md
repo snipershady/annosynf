@@ -269,7 +269,12 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `release()`. Golden di `createEnzymeTable` (comando `enzymes`, con il mapping accession → enzimi). Sul file
   completo del 02-Sep-2026 (8472 voci, 239 440 coppie accession-enzima, 0,7 s) identico al legacy; unica
   correzione, l'ultima voce senza DR (§A.12.22). Corretto §A.7.6: la enzymeTable contiene anche le voci senza DR.
-- [ ] **4.5 `PathwayTxtParser`** (livelli con trim, niente piè di pagina come pathway: §A.12.5).
+- [x] **4.5 `PathwayTxtParser`** (livelli con trim, niente piè di pagina come pathway: §A.12.5): `Pathway` con
+  descrizione, accession e `levels()`, `release()`. I pathway sono le descrizioni dei blocchi (tra righe di
+  trattini) che contengono accession: niente più 12 righe fisse da saltare. Golden di
+  `createPathwayTableAndMapping` (comando `pathways`). Sul file completo 2026_03 (1465 pathway, 131 426
+  accession, 0,3 s) le sole differenze sono quelle dichiarate: il piè di pagina e un'accession ripetuta che il
+  legacy mappa due volte (§A.12.23, da non riprodurre neanche nell'import di 6.3).
 - [ ] **4.6 `CddIdParser`** e **`Pfam2GoParser`** (nessun GO sul dominio precedente: §A.12.4).
 - [ ] **4.7 `IdMappingParser`** (colonne GO/UniRef trovate dall'header o dai valori) e **`SpeclistParser`**.
 
@@ -365,6 +370,6 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate (salvo la decisione 0.6): M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
-Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.4, prossimo 4.5 (`PathwayTxtParser`). Le
+Fase 4 (parser dei dati di riferimento, M2) in corso: fatti 4.1–4.5, prossimo 4.6 (`CddIdParser`, `Pfam2GoParser`). Le
 fasi 1–3 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
