@@ -389,6 +389,21 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
     step 6.5.
 - [ ] **6.5 Misure** su una release UniRef reale (tempo, spazio) e decisione sull'"annotazione pigra"
   (§B.4.2), annotate in CLAUDE.md.
+  Rimandato (2026-10-28): l'ambiente di sviluppo ha 13 GB liberi su 78 (8 core, 15 GB di RAM) e non basta. L'utente
+  prepara un ambiente più capiente; la fase si fa lì, tutta insieme.
+  - **Requisiti dell'ambiente**: circa 300 GB di disco liberi (sorgenti complete circa 90 GB compressi, database BLAST
+    circa 60 GB, più lo spazio di MySQL per `ref_protein_go`, che con TrEMBL può superare 10⁹ righe), almeno 16 GB di
+    RAM, MySQL 8.4+ con `local_infile=ON`, `innodb_buffer_pool_size` ≥ 8 GB e `max_allowed_packet` ≥ 256M, Redis 8,
+    BLAST+ 2.17, un worker sulla coda `import`. `ANNOSYNF_STORAGE_DIR` e `BLAST_DB_DIR` possono stare su volumi diversi.
+  - **Piano in due tempi** (se serve ripartire da poco): 6.5a release UniRef50 con Swiss-Prot, GO, enzimi, pathway,
+    domini, Pfam2GO, speclist, Cdd e idmapping (circa 10 GB su disco, senza RNAcentral né TrEMBL); 6.5b release
+    completa con TrEMBL (40,6 GB) e RNAcentral (11,9 GB), per i numeri dell'"annotazione pigra".
+  - **Da misurare**: `extract_cdd` sul tar reale a volumi (`Cdd.pal` + `Cdd.NN.*`, 349 file) e `blastdbcmd -info` sul
+    risultato; `build_ncrna` su RNAcentral; tempo e spazio di `map_protein_go` sull'idmapping completo (nel 6.3: 150 s
+    ogni 2 milioni di righe); tempo di `import_proteins:tr`; memoria di picco di ogni task; memoria dell'insieme di id
+    di `OrganismSetDatabaseBuilder` su un taxon grande; dimensione di `ref_*` e dei database BLAST.
+  - **Da decidere con i numeri**: "annotazione pigra" sì o no (§B.4.2); heartbeat del lock per release (voce sopra);
+    eventuale limite o scansione a blocchi per gli insiemi di organismi molto grandi.
 
 ## Fase 7 — Esecuzione e parsing BLAST (M4) · elimina `Bio::SearchIO`, `Parallel::ForkManager`, `nohup`
 
