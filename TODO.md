@@ -336,8 +336,16 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   NULL per il vincolo di unicità, versione obbligatoria alla creazione, hash su tutti i dizionari, timestamp al
   secondo). Aggiornato `symfony/mime` a 8.1.10 (advisory CVE-2026-45070 uscito il 2026-10-28, bloccava
   `composer audit`).
-- [ ] **6.2 `MysqlLoadDataBulkLoader`**: `LOAD DATA LOCAL INFILE` via `Pdo\Mysql` limitato a `var/tmp/bulk`.
-  Prerequisito: `local_infile=ON` sul server (oggi è `0`).
+- [x] **6.2 `MysqlLoadDataBulkLoader`**: `LOAD DATA LOCAL INFILE` via `Pdo\Mysql` limitato a `var/tmp/bulk`.
+  Prerequisito: `local_infile=ON` sul server (attivato il 2026-10-28, vedi le note per la guida al setup).
+  Porta `BulkLoader` (`load(table, columns, rows)`, righe da un iterabile), adapter in `src/Infrastructure/Persistence`:
+  TSV temporaneo scritto con `PendingFile` in `annosynf.bulk_dir`, formato di default di LOAD DATA (escape di `\`, tab,
+  a capo, CR, NUL; `\N` per NULL), file cancellato sempre. Emerso: con `LOCAL` MySQL non si ferma sugli errori dei dati
+  (salta i duplicati, tronca o converte i valori) e li segnala solo come avvisi, quindi l'adapter legge
+  `SHOW COUNT(*) WARNINGS` e trasforma ogni avviso in `BulkLoadFailedException`. Sicurezza: `ATTR_LOCAL_INFILE` resta
+  spento e si imposta solo `ATTR_LOCAL_INFILE_DIRECTORY` (con il primo acceso mysqlnd ignora la directory); un test
+  verifica che un file fuori da `var/tmp/bulk` venga rifiutato. Misura: 2 milioni di righe con PK e indice unico in
+  15,5 s (~130 000 righe/s, buffer pool di 128 MB), 58 MB di memoria.
 - [x] **Descrizione in `ref_enzyme`** (deciso il 2026-10-27): due colonne, `description` = testo di ENZYME
   (`EnzymeEntry::description()`, per la UI) e `legacy_description` = `EnzymeEntry::legacyDescription()` (per
   l'export compatibile).
@@ -413,12 +421,29 @@ UI completa (M7–M8), confronti (M9), import delle analisi legacy e DIAMOND (M1
 
 ---
 
+## Note per la guida al setup (da scrivere)
+
+Requisiti dell'ambiente emersi durante il porting, da riportare nella guida di installazione (milestone M11).
+
+- **MySQL, `local_infile`** (step 6.2): l'import delle release usa `LOAD DATA LOCAL INFILE`, che va abilitato sul
+  server. In `/etc/mysql/mysql.conf.d/mysqld.cnf`, sezione `[mysqld]`, impostare `local_infile = 1` (l'installazione
+  Debian/Ubuntu lo ha a `0`) e riavviare (`systemctl restart mysql`). In alternativa `SET PERSIST local_infile = ON`
+  da un utente amministratore, che sopravvive al riavvio e prevale sul file di configurazione. Verifica:
+  `SELECT @@global.local_infile` deve dare `1`; `performance_schema.variables_info` indica da quale file arriva il
+  valore. Senza, l'import fallisce con `3948 Loading local data is disabled`.
+- **Lato client non serve altro**: `config/packages/doctrine.yaml` limita il caricamento ai file di
+  `var/tmp/bulk` (`Pdo\Mysql::ATTR_LOCAL_INFILE_DIRECTORY`, parametro `annosynf.bulk_dir`), che deve stare sull'host
+  dove gira PHP (il file lo invia il client, quindi MySQL può essere remoto). `ATTR_LOCAL_INFILE` resta spento: acceso,
+  il server potrebbe chiedere al client qualunque file.
+- **MySQL, dimensionamento** (§B.4.4, da confermare con le misure dello step 6.5): `max_allowed_packet` ≥ 256M (in
+  locale 64M) e `innodb_buffer_pool_size` intorno al 50% della RAM del server DB (in locale 128M, il default).
+
 ## Prossimo passo consigliato
 
 Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al legacy.
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
 reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5: 5.1–5.3 fatti (download con ripresa,
 URL HTTPS verificati, decompressione gz/tar in streaming). Resta 5.4 (catalogo delle sorgenti), da fare con la
-fase 6. Fase 6: 6.1 fatto (catalogo release e tabelle `ref_*` partizionate); prossimo passo: 6.2
-(`MysqlLoadDataBulkLoader`, richiede `local_infile=ON` sul server MySQL). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+fase 6. Fase 6: 6.1 e 6.2 fatti (catalogo release, tabelle `ref_*` partizionate, bulk loader); prossimo passo:
+6.3 (task di import set-based con workflow Release e Messenger), insieme al 5.4 (catalogo delle sorgenti). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

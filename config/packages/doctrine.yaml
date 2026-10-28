@@ -15,6 +15,10 @@ doctrine:
         # Le tabelle ref_* sono partizionate per release (CLAUDE.md §B.4.2): Doctrine non esprime il partizionamento,
         # quindi le gestiscono migration con SQL esplicito e restano fuori dal confronto con i metadati.
         schema_filter: ~^(?!ref_)~
+        # LOAD DATA LOCAL INFILE (MysqlLoadDataBulkLoader) solo dai file in questa directory. ATTR_LOCAL_INFILE resta
+        # spento di proposito: acceso, mysqlnd permetterebbe al server di leggere qualunque file del client.
+        options:
+            !php/const Pdo\Mysql::ATTR_LOCAL_INFILE_DIRECTORY: '%annosynf.bulk_dir%'
     orm:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
