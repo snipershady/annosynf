@@ -30,3 +30,4 @@ framework:
             Symfony\Component\Notifier\Message\SmsMessage: async
 
             App\Message\RunReleaseTask: import
+            App\Message\BuildOrganismSetDatabases: import

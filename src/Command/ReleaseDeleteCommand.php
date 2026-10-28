@@ -65,6 +65,8 @@ final readonly class ReleaseDeleteCommand
 
         $this->writer->drop($id);
         $this->storage->remove($this->storage->directory($id));
+        $this->storage->remove($this->storage->databaseDirectory($id));
+
         $this->entityManager->remove($release);
         $this->entityManager->flush();
 

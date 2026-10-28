@@ -12,6 +12,9 @@ use App\Command\ReleaseDeleteCommand;
 use App\Command\ReleaseListCommand;
 use App\Command\ReleaseRetryCommand;
 use App\Command\ReleaseShowCommand;
+use App\Domain\Blast\BlastDbInfo;
+use App\Domain\Blast\BlastDbInfoParser;
+use App\Domain\Reference\BlastDbKind;
 use App\Domain\Reference\CddDomain;
 use App\Domain\Reference\CddIdParser;
 use App\Domain\Reference\EnzymeDatParser;
@@ -22,6 +25,7 @@ use App\Domain\Reference\HeaderTags;
 use App\Domain\Reference\IdMappingEntry;
 use App\Domain\Reference\IdMappingParser;
 use App\Domain\Reference\ImportTask;
+use App\Domain\Reference\IndexTask;
 use App\Domain\Reference\MappingResult;
 use App\Domain\Reference\OboParser;
 use App\Domain\Reference\Pathway;
@@ -42,16 +46,27 @@ use App\Domain\Reference\UniProtHeader;
 use App\Domain\Reference\UniProtHeaderParser;
 use App\Domain\Reference\UniRefHeader;
 use App\Domain\Reference\UniRefHeaderParser;
+use App\Entity\ReferenceBlastDb;
 use App\Entity\ReferenceRelease;
 use App\Entity\ReferenceSourceFile;
 use App\Entity\ReferenceTask;
 use App\Infrastructure\Persistence\MysqlLoadDataBulkLoader;
 use App\Infrastructure\Persistence\MysqlReferenceDataWriter;
+use App\Infrastructure\Process\BlastBinaryLocator;
+use App\Infrastructure\Process\BlastPlusDbBuilder;
+use App\Infrastructure\Process\BlastProcessExecutor;
+use App\Infrastructure\Process\BlastVersionReader;
+use App\Infrastructure\Process\ProcessResult;
+use App\Infrastructure\Process\SymfonyProcessRunner;
+use App\Infrastructure\Storage\ByteStream;
 use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\PendingFile;
+use App\Infrastructure\Storage\StreamingArchiveExtractor;
+use App\Infrastructure\Storage\TarHeader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Message\RunReleaseTask;
 use App\MessageHandler\RunReleaseTaskHandler;
+use App\Release\BlastDatabaseRegistry;
 use App\Release\ReleaseCreator;
 use App\Release\ReleaseNotCreatedException;
 use App\Release\ReleaseStorage;
@@ -70,6 +85,20 @@ use Symfony\Component\Console\Command\Command;
 #[CoversClass(ReleaseRetryCommand::class)]
 #[CoversClass(ReleaseDeleteCommand::class)]
 #[CoversClass(ConsoleTable::class)]
+#[UsesClass(TarHeader::class)]
+#[UsesClass(StreamingArchiveExtractor::class)]
+#[UsesClass(ByteStream::class)]
+#[UsesClass(SymfonyProcessRunner::class)]
+#[UsesClass(ProcessResult::class)]
+#[UsesClass(BlastVersionReader::class)]
+#[UsesClass(BlastProcessExecutor::class)]
+#[UsesClass(BlastPlusDbBuilder::class)]
+#[UsesClass(BlastBinaryLocator::class)]
+#[UsesClass(ReferenceBlastDb::class)]
+#[UsesClass(IndexTask::class)]
+#[UsesClass(BlastDbKind::class)]
+#[UsesClass(BlastDbInfoParser::class)]
+#[UsesClass(BlastDbInfo::class)]
 #[UsesClass(ReleaseCreator::class)]
 #[UsesClass(ReleaseNotCreatedException::class)]
 #[UsesClass(ReleaseStorage::class)]
@@ -116,6 +145,7 @@ use Symfony\Component\Console\Command\Command;
 #[UsesClass(PendingFile::class)]
 #[UsesClass(TextFileReader::class)]
 #[UsesClass(ReferenceReleaseRepository::class)]
+#[UsesClass(BlastDatabaseRegistry::class)]
 final class ReleaseCommandsTest extends ReleaseTestCase
 {
     public function testAReleaseIsCreatedListedAndShown(): void

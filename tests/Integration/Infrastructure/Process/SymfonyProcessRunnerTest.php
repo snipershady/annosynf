@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Process;
 
 use App\Infrastructure\Process\ProcessResult;
 use App\Infrastructure\Process\SymfonyProcessRunner;
+use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +30,18 @@ final class SymfonyProcessRunnerTest extends TestCase
         self::assertSame(3, $result->exitCode);
         self::assertSame('boom', $result->errorOutput);
         self::assertFalse($result->timedOut);
+    }
+
+    public function testTheInputIsStreamedToStdin(): void
+    {
+        $chunks = (static function (): Generator {
+            yield 'first ';
+            yield 'second';
+        })();
+
+        $result = new SymfonyProcessRunner()->run([\PHP_BINARY, '-r', 'echo strtoupper(stream_get_contents(STDIN));'], sys_get_temp_dir(), 10.0, [], $chunks);
+
+        self::assertSame('FIRST SECOND', $result->output);
     }
 
     public function testWorkingDirectoryIsUsed(): void

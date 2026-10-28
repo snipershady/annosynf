@@ -23,7 +23,16 @@ final class BlastProcessExecutorTest extends TestCase
         $result = new BlastProcessExecutor($runner, 30.0)->execute('blastx', ['/opt/blast/blastx', '-version'], '/opt/blast');
 
         self::assertSame('out', $result->output);
-        self::assertSame([['command' => ['/opt/blast/blastx', '-version'], 'workingDirectory' => '/opt/blast', 'timeout' => 30.0, 'environment' => ['BLAST_USAGE_REPORT' => 'false']]], $runner->calls);
+        self::assertSame([['command' => ['/opt/blast/blastx', '-version'], 'workingDirectory' => '/opt/blast', 'timeout' => 30.0, 'environment' => ['BLAST_USAGE_REPORT' => 'false'], 'input' => null]], $runner->calls);
+    }
+
+    public function testTheInputIsPassedToTheProcess(): void
+    {
+        $runner = new RecordingProcessRunner();
+
+        new BlastProcessExecutor($runner, 30.0)->execute('makeblastdb', ['/opt/blast/makeblastdb'], '/tmp', input: ['>a\n', 'MK\n']);
+
+        self::assertSame('>a\nMK\n', $runner->calls[0]['input']);
     }
 
     public function testAcceptedExitCodesAreNotErrors(): void

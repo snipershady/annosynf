@@ -11,9 +11,9 @@ use Symfony\Component\Process\Process;
 final readonly class SymfonyProcessRunner implements ProcessRunnerInterface
 {
     #[Override]
-    public function run(array $command, string $workingDirectory, float $timeout, array $environment = []): ProcessResult
+    public function run(array $command, string $workingDirectory, float $timeout, array $environment = [], ?iterable $input = null): ProcessResult
     {
-        $process = new Process($command, $workingDirectory, $environment, null, $timeout);
+        $process = new Process($command, $workingDirectory, $environment, $input, $timeout);
 
         try {
             $process->run();

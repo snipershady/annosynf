@@ -7,7 +7,9 @@ i task e controlla le tabelle `ref_*`.
 Sono copie dei fixture di `tests/Fixtures/reference/`, non compresse anche quando il nome finisce in `.gz` (GzipReader
 legge i file non compressi così come sono). `uniprot_sprot`, `uniprot_trembl` e `uniref90` contengono gli header di
 `reference/headers/` della sola sorgente, senza accession ripetute, ciascuno con una sequenza fittizia;
-`Cdd_LE.tar.gz` e `rnacentral_active.fasta.gz` sono segnaposto finché l'indicizzazione (step 6.4) non li userà.
+`Cdd_LE.tar.gz` contiene un database BLAST proteico di una sola sequenza (Pfam `pfam00001`) chiamato `Cdd`, costruito con
+`makeblastdb`: per `blastdbcmd -info` equivale al DB RPS di NCBI (che è a volumi, `Cdd.pal` + `Cdd.NN.*`) e basta a
+provare estrazione e verifica; `rnacentral_active.fasta.gz` è un vero gzip con due RNA.
 
 Righe aggiunte rispetto ai fixture di `reference/`, perché le associazioni abbiano qualcosa da legare: in
 `idmapping_selected.tab.gz` la riga di P31946 (due GO della release più `GO:9999999`, che non c'è, e il cluster

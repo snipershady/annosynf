@@ -6,7 +6,9 @@ namespace App\Tests\Support;
 
 use App\Application\Port\ReferenceDataWriter;
 use App\Entity\ReferenceRelease;
+use App\Message\BuildOrganismSetDatabases;
 use App\Message\RunReleaseTask;
+use App\MessageHandler\BuildOrganismSetDatabasesHandler;
 use App\MessageHandler\RunReleaseTaskHandler;
 use App\Release\ReleaseStorage;
 use App\Repository\ReferenceReleaseRepository;
@@ -40,7 +42,7 @@ abstract class ReleaseTestCase extends KernelTestCase
     }
 
     /**
-     * Fa il lavoro del worker: consegna all'handler i messaggi della coda `import` finché ce ne sono.
+     * Fa il lavoro del worker: consegna agli handler i messaggi della coda `import` finché ce ne sono.
      *
      * @return int messaggi gestiti
      */
@@ -54,9 +56,15 @@ abstract class ReleaseTestCase extends KernelTestCase
         while (($envelopes = [...$transport->get()]) !== []) {
             foreach ($envelopes as $envelope) {
                 $message = $envelope->getMessage();
-                self::assertInstanceOf(RunReleaseTask::class, $message);
                 $transport->ack($envelope);
-                $handler($message);
+
+                if ($message instanceof BuildOrganismSetDatabases) {
+                    self::getContainer()->get(BuildOrganismSetDatabasesHandler::class)($message);
+                } else {
+                    self::assertInstanceOf(RunReleaseTask::class, $message);
+                    $handler($message);
+                }
+
                 ++$handled;
             }
         }
@@ -94,6 +102,7 @@ abstract class ReleaseTestCase extends KernelTestCase
             $id = (int) $release->getId();
             $writer->drop($id);
             $storage->remove($storage->directory($id));
+            $storage->remove($storage->databaseDirectory($id));
         }
 
         $this->entityManager->getConnection()->executeStatement('DELETE FROM reference_release');

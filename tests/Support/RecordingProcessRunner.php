@@ -15,7 +15,7 @@ use Override;
  */
 final class RecordingProcessRunner implements ProcessRunnerInterface
 {
-    /** @var list<array{command: non-empty-list<string>, workingDirectory: string, timeout: float, environment: array<string, string>}> */
+    /** @var list<array{command: non-empty-list<string>, workingDirectory: string, timeout: float, environment: array<string, string>, input: ?string}> */
     public array $calls = [];
 
     /** @var list<ProcessResult> */
@@ -40,9 +40,15 @@ final class RecordingProcessRunner implements ProcessRunnerInterface
     }
 
     #[Override]
-    public function run(array $command, string $workingDirectory, float $timeout, array $environment = []): ProcessResult
+    public function run(array $command, string $workingDirectory, float $timeout, array $environment = [], ?iterable $input = null): ProcessResult
     {
-        $this->calls[] = ['command' => $command, 'workingDirectory' => $workingDirectory, 'timeout' => $timeout, 'environment' => $environment];
+        $this->calls[] = [
+            'command' => $command,
+            'workingDirectory' => $workingDirectory,
+            'timeout' => $timeout,
+            'environment' => $environment,
+            'input' => $input === null ? null : implode('', [...$input]),
+        ];
 
         if ($this->sideEffect instanceof Closure) {
             ($this->sideEffect)($command);

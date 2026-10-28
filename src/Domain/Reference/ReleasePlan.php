@@ -8,8 +8,8 @@ use InvalidArgumentException;
 
 /**
  * Task di una release nell'ordine di esecuzione (§B.5.1): download di ogni sorgente, import, associazioni e chiusura.
- * La fase di ogni task è lo stato del workflow `reference_release` mentre gira. L'indicizzazione BLAST (step 6.4)
- * si inserirà prima di `finalize`, nella fase `indexing`.
+ * La fase di ogni task è lo stato del workflow `reference_release` mentre gira. L'indicizzazione BLAST ({@see IndexTask})
+ * va prima di `finalize`, nella fase `indexing`.
  */
 final class ReleasePlan
 {
@@ -25,6 +25,7 @@ final class ReleasePlan
         return [
             ...array_map(self::download(...), SourceCatalogue::sourcesFor($type)),
             ...array_map(static fn (ImportTask $task): string => $task->value, ImportTask::planFor($type)),
+            ...array_map(static fn (IndexTask $task): string => $task->value, IndexTask::planFor($type)),
             self::FINALIZE,
         ];
     }
@@ -50,7 +51,7 @@ final class ReleasePlan
         return match (true) {
             self::downloadedSource($task) instanceof SourceKind => ReleaseStatus::Downloading,
             ImportTask::tryFrom($task) instanceof ImportTask => ImportTask::from($task)->phase(),
-            $task === self::FINALIZE => ReleaseStatus::Indexing,
+            IndexTask::tryFrom($task) instanceof IndexTask, $task === self::FINALIZE => ReleaseStatus::Indexing,
             default => throw new InvalidArgumentException(\sprintf('"%s" is not a release task.', $task)),
         };
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Reference;
 
 use App\Domain\Reference\ImportTask;
+use App\Domain\Reference\IndexTask;
 use App\Domain\Reference\ReleasePlan;
 use App\Domain\Reference\ReleaseStatus;
 use App\Domain\Reference\ReleaseType;
@@ -17,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ReleasePlan::class)]
 #[UsesClass(ImportTask::class)]
+#[UsesClass(IndexTask::class)]
 #[UsesClass(SourceCatalogue::class)]
 final class ReleasePlanTest extends TestCase
 {
@@ -31,7 +33,7 @@ final class ReleasePlanTest extends TestCase
             self::assertSame(array_map(static fn (ReleaseStatus $status): string => $status->value, $order), $phases);
             self::assertSame('download:' . SourceCatalogue::versionSource($type)->value, $tasks[0]);
             self::assertSame(ReleasePlan::FINALIZE, $tasks[\count($tasks) - 1]);
-            self::assertCount(12 + 11 + 1, $tasks);
+            self::assertCount(12 + 11 + 4 + 1, $tasks);
         }
     }
 
@@ -46,8 +48,8 @@ final class ReleasePlanTest extends TestCase
     public function testAnUnknownTaskHasNoPhase(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIsOrContains('"build_blastdb:sp" is not a release task.');
+        $this->expectExceptionMessageIsOrContains('"build_blastdb:xx" is not a release task.');
 
-        ReleasePlan::phase('build_blastdb:sp');
+        ReleasePlan::phase('build_blastdb:xx');
     }
 }

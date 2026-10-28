@@ -16,12 +16,28 @@ final readonly class ReleaseStorage
     public function __construct(
         #[Autowire('%env(resolve:ANNOSYNF_STORAGE_DIR)%')]
         private string $root,
+        #[Autowire('%env(resolve:BLAST_DB_DIR)%')]
+        private string $blastDbRoot,
     ) {
     }
 
     public function directory(int $releaseId): string
     {
         return \sprintf('%s/releases/%d', $this->root, $releaseId);
+    }
+
+    /**
+     * Dove stanno i database BLAST della release, sotto BLAST_DB_DIR: lo spazio è molto più grande di quello dei
+     * dati (TrEMBL), quindi può stare su un volume a parte.
+     */
+    public function databasePath(int $releaseId, string $name): string
+    {
+        return $this->databaseDirectory($releaseId) . '/' . $name;
+    }
+
+    public function databaseDirectory(int $releaseId): string
+    {
+        return \sprintf('%s/release-%d', $this->blastDbRoot, $releaseId);
     }
 
     /**

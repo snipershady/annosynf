@@ -7,6 +7,9 @@ namespace App\Tests\Integration\Release;
 use App\Application\Release\ImportOutcome;
 use App\Application\Release\ImportReferenceData;
 use App\Application\Release\UnexpectedReleaseDataException;
+use App\Domain\Blast\BlastDbInfo;
+use App\Domain\Blast\BlastDbInfoParser;
+use App\Domain\Reference\BlastDbKind;
 use App\Domain\Reference\CddDomain;
 use App\Domain\Reference\CddIdParser;
 use App\Domain\Reference\EnzymeDatParser;
@@ -17,6 +20,7 @@ use App\Domain\Reference\HeaderTags;
 use App\Domain\Reference\IdMappingEntry;
 use App\Domain\Reference\IdMappingParser;
 use App\Domain\Reference\ImportTask;
+use App\Domain\Reference\IndexTask;
 use App\Domain\Reference\MappingResult;
 use App\Domain\Reference\OboParser;
 use App\Domain\Reference\Pathway;
@@ -39,16 +43,27 @@ use App\Domain\Reference\UniProtHeaderParser;
 use App\Domain\Reference\UniRefHeader;
 use App\Domain\Reference\UniRefHeaderParser;
 use App\Domain\Reference\UnirefVariant;
+use App\Entity\ReferenceBlastDb;
 use App\Entity\ReferenceRelease;
 use App\Entity\ReferenceSourceFile;
 use App\Entity\ReferenceTask;
 use App\Infrastructure\Persistence\MysqlLoadDataBulkLoader;
 use App\Infrastructure\Persistence\MysqlReferenceDataWriter;
+use App\Infrastructure\Process\BlastBinaryLocator;
+use App\Infrastructure\Process\BlastPlusDbBuilder;
+use App\Infrastructure\Process\BlastProcessExecutor;
+use App\Infrastructure\Process\BlastVersionReader;
+use App\Infrastructure\Process\ProcessResult;
+use App\Infrastructure\Process\SymfonyProcessRunner;
+use App\Infrastructure\Storage\ByteStream;
 use App\Infrastructure\Storage\GzipReader;
 use App\Infrastructure\Storage\PendingFile;
+use App\Infrastructure\Storage\StreamingArchiveExtractor;
+use App\Infrastructure\Storage\TarHeader;
 use App\Infrastructure\Storage\TextFileReader;
 use App\Message\RunReleaseTask;
 use App\MessageHandler\RunReleaseTaskHandler;
+use App\Release\BlastDatabaseRegistry;
 use App\Release\ReleaseCreator;
 use App\Release\ReleaseNotCreatedException;
 use App\Release\ReleaseStorage;
@@ -68,6 +83,20 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[CoversClass(ReleaseTaskRunner::class)]
 #[CoversClass(RunReleaseTaskHandler::class)]
 #[CoversClass(RunReleaseTask::class)]
+#[UsesClass(TarHeader::class)]
+#[UsesClass(StreamingArchiveExtractor::class)]
+#[UsesClass(ByteStream::class)]
+#[UsesClass(SymfonyProcessRunner::class)]
+#[UsesClass(ProcessResult::class)]
+#[UsesClass(BlastVersionReader::class)]
+#[UsesClass(BlastProcessExecutor::class)]
+#[UsesClass(BlastPlusDbBuilder::class)]
+#[UsesClass(BlastBinaryLocator::class)]
+#[UsesClass(ReferenceBlastDb::class)]
+#[UsesClass(IndexTask::class)]
+#[UsesClass(BlastDbKind::class)]
+#[UsesClass(BlastDbInfoParser::class)]
+#[UsesClass(BlastDbInfo::class)]
 #[UsesClass(ImportReferenceData::class)]
 #[UsesClass(ImportOutcome::class)]
 #[UsesClass(CddDomain::class)]
@@ -109,6 +138,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[UsesClass(TextFileReader::class)]
 #[UsesClass(ReferenceReleaseRepository::class)]
 #[UsesClass(UnexpectedReleaseDataException::class)]
+#[UsesClass(BlastDatabaseRegistry::class)]
 final class ReleaseImportTest extends ReleaseTestCase
 {
     public function testAUniRefReleaseIsImportedTaskByTask(): void
@@ -118,7 +148,7 @@ final class ReleaseImportTest extends ReleaseTestCase
 
         self::assertSame('2026_03', $release->getVersion());
         self::assertSame(ReleaseStatus::Pending, $release->getStatus());
-        self::assertSame(24, $this->work(), 'one message per task');
+        self::assertSame(28, $this->work(), 'one message per task');
 
         $release = $this->reload($id);
 
@@ -143,9 +173,38 @@ final class ReleaseImportTest extends ReleaseTestCase
         ));
         self::assertFileExists(self::getContainer()->get(ReleaseStorage::class)->directory($id) . '/uniref90.fasta.gz');
 
+        $databases = [];
+
+        foreach ($this->entityManager->getRepository(ReferenceBlastDb::class)->findBy(['release' => $release]) as $database) {
+            $databases[$database->getName()] = [$database->getKind()->value, $database->getDbType(), $database->getNumSequences(), $database->getNumLetters()];
+        }
+
+        ksort($databases);
+        self::assertSame(['Cdd' => ['cdd', 'rps', 1, 348], 'ncRNA' => ['ncrna', 'nucl', 2, 80], 'uniprot_sprot' => ['sp', 'prot', 11, 297], 'uniref90' => ['uniref', 'prot', 7, 70]], $databases);
+        self::assertFileExists(self::getContainer()->get(ReleaseStorage::class)->databasePath($id, 'uniref90.pin'));
+
         $this->bus()->dispatch(new RunReleaseTask($id));
         self::assertSame(1, $this->work(), 'a late message finds nothing left to do');
         self::assertSame(ReleaseStatus::Ready, $this->reload($id)->getStatus());
+    }
+
+    public function testAnIndexTaskRunAgainReplacesItsDatabaseRecord(): void
+    {
+        $id = (int) $this->creator()->create(ReleaseType::UniProtKb, null)->getId();
+        $this->work();
+        $connection = self::getContainer()->get(Connection::class);
+        // come dopo un worker morto a metà: il database c'è già, ma il task non risulta completato
+        $connection->executeStatement("UPDATE reference_task SET status = 'pending' WHERE release_id = ? AND task IN ('build_ncrna', 'finalize')", [$id]);
+        $connection->executeStatement("UPDATE reference_release SET status = 'failed', error = 'worker died' WHERE id = ?", [$id]);
+
+        $this->entityManager->clear();
+
+        $this->bus()->dispatch(new RunReleaseTask($id, resume: true));
+        $this->work();
+
+        $release = $this->reload($id);
+        self::assertSame(ReleaseStatus::Ready, $release->getStatus());
+        self::assertCount(1, $this->entityManager->getRepository(ReferenceBlastDb::class)->findBy(['release' => $release, 'name' => 'ncRNA']));
     }
 
     public function testAFailedTaskStopsTheReleaseUntilItIsResumed(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Domain\Reference\UnirefVariant;
+use App\Entity\ReferenceBlastDb;
 use App\Entity\ReferenceRelease;
 use App\Entity\ReferenceSourceFile;
 use App\Entity\ReferenceTask;
@@ -67,6 +68,20 @@ final readonly class ReleaseShowCommand
             ],
             $this->releases->sources($release),
         ));
+
+        if (($databases = $this->releases->blastDatabases($release)) !== []) {
+            ConsoleTable::render($io, ['BLAST database', 'Kind', 'Sequences', 'Letters', 'Organism set', 'BLAST+'], array_map(
+                static fn (ReferenceBlastDb $database): array => [
+                    $database->getName(),
+                    $database->getDbType(),
+                    number_format($database->getNumSequences()),
+                    number_format($database->getNumLetters()),
+                    $database->getOrganismSet()?->getName() ?? '–',
+                    $database->getBlastVersion(),
+                ],
+                $databases,
+            ));
+        }
 
         $versions = $release->getSourceVersions();
         $counts = $release->getCounts() ?? [];

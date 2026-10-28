@@ -53,6 +53,23 @@ final class ReferenceReleaseRepositoryTest extends DatabaseTestCase
         self::assertNull($releases->findOneByIdentity(ReleaseType::UniProtKb, '2026_04', null));
     }
 
+    public function testBlastDatabasesAreListedInCreationOrder(): void
+    {
+        $release = EntityFactory::release(ReleaseType::UniRef, '2026_03');
+        $other = EntityFactory::release(ReleaseType::UniRef, '2026_04');
+        $this->persistAndReload(
+            $release,
+            $other,
+            new ReferenceBlastDb($release, BlastDbKind::TrEmbl, 'uniprot_trembl', '/blastdb/1/uniprot_trembl', 10, 100, '2.17.0+', EntityFactory::now()),
+            new ReferenceBlastDb($release, BlastDbKind::SwissProt, 'uniprot_sprot', '/blastdb/1/uniprot_sprot', 5, 50, '2.17.0+', EntityFactory::now()),
+            new ReferenceBlastDb($other, BlastDbKind::SwissProt, 'uniprot_sprot', '/blastdb/2/uniprot_sprot', 5, 50, '2.17.0+', EntityFactory::now()),
+        );
+        $releases = self::getContainer()->get(ReferenceReleaseRepository::class);
+        $loaded = $releases->findAllById()[0];
+
+        self::assertSame(['uniprot_trembl', 'uniprot_sprot'], array_map(static fn (ReferenceBlastDb $database): string => $database->getName(), $releases->blastDatabases($loaded)));
+    }
+
     public function testReleasesTasksAndSourcesAreListedInCreationOrder(): void
     {
         $second = EntityFactory::release(ReleaseType::UniRef, '2026_04');

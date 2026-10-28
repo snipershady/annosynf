@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Domain\Reference\ReleaseType;
 use App\Domain\Reference\UnirefVariant;
+use App\Entity\ReferenceBlastDb;
 use App\Entity\ReferenceRelease;
 use App\Entity\ReferenceSourceFile;
 use App\Entity\ReferenceTask;
@@ -66,5 +67,18 @@ final class ReferenceReleaseRepository extends ServiceEntityRepository
             ->orderBy('s.id', SortDirection::Ascending)->getQuery()->getResult();
 
         return $sources;
+    }
+
+    /**
+     * @return list<ReferenceBlastDb> database BLAST della release, completi e ristretti a un insieme di organismi
+     */
+    public function blastDatabases(ReferenceRelease $release): array
+    {
+        /** @var list<ReferenceBlastDb> $databases */
+        $databases = $this->getEntityManager()->createQueryBuilder()->select('d')->from(ReferenceBlastDb::class, 'd')
+            ->where('d.release = :release')->setParameter('release', $release)
+            ->orderBy('d.id', SortDirection::Ascending)->getQuery()->getResult();
+
+        return $databases;
     }
 }

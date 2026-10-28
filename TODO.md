@@ -365,8 +365,28 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
 - [ ] **Release bloccata da un worker morto** (emerso in 6.3): il lock per release dura 12 ore e il task resta
   `running`; oggi si sblocca con `annosynf:release:delete --force` o aspettando la scadenza. Valutare un lock
   rinnovato durante il task (heartbeat) quando si misura l'import completo (6.5).
-- [ ] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
+- [x] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
   porta `BlastDbBuilder`, sottoinsiemi per organismo con `FastaSubsetWriter`.
+  - [x] Porta `BlastDbBuilder` + adapter `BlastPlusDbBuilder` (`src/Infrastructure/Process`): FASTA (anche `.gz`)
+    letto con `GzipReader` e passato a `makeblastdb` da stdin (`ProcessRunnerInterface::run()` ha ora `$input`),
+    verifica con `blastdbcmd -info` (`BlastDbInfoParser`, dominio). Senza `-parse_seqids`, come il legacy.
+  - [x] Task `IndexTask` (dominio) nella fase `indexing`, prima di `finalize`: `extract_cdd` (untar del tar NCBI in
+    `BLAST_DB_DIR/release-<id>/` e verifica con `blastdbcmd -info`), `build_blastdb:sp|tr|uniref`, `build_ncrna`;
+    nomi come i file di Annocript (`uniprot_sprot`, `uniref90`, `ncRNA`, `Cdd`). Ogni task registra un
+    `ReferenceBlastDb` (sostituisce il record se il task si riesegue); `release:delete` toglie anche i database.
+    Fixture `Cdd_LE.tar.gz` (DB proteico di una sequenza) e `rnacentral_active.fasta.gz` ora veri.
+  - [x] Sottoinsiemi per organismo: porta `OrganismLookup` (`MysqlOrganismLookup`: ricerca nel catalogo `speclist`,
+    conteggio delle proteine, id delle sequenze per `name_exact` / `name_ci` / `taxon_id`), `OrganismSetCreator`
+    (release pronta, nome unico, conta le proteine di ogni organismo, rifiuta insiemi senza corrispondenze),
+    messaggio `BuildOrganismSetDatabases` sulla coda `import` e `OrganismSetDatabaseBuilder`: il FASTA completo si
+    legge una volta in streaming con il `FastaSubset` del dominio (ex `faSomeRecords`), il FASTA ristretto va a
+    `makeblastdb` e si cancella; database `<sp|tr|uniref>_set<id>` registrati con l'insieme (una sorgente senza
+    sequenze degli organismi non ne ha uno). Comandi `annosynf:organism-set:create` e `annosynf:organism:search`;
+    `annosynf:release:show` elenca i database BLAST.
+    Limite noto: gli id delle sequenze di un insieme stanno in memoria (`FastaSubset`), quindi un taxon con decine di
+    milioni di proteine TrEMBL chiederebbe gigabyte; da misurare in 6.5.
+  - [ ] Provare `extract_cdd` e `build_ncrna` sui file reali (Cdd 1,9 GB, RNAcentral 11,9 GB): fatto a mano nello
+    step 6.5.
 - [ ] **6.5 Misure** su una release UniRef reale (tempo, spazio) e decisione sull'"annotazione pigra"
   (§B.4.2), annotate in CLAUDE.md.
 
@@ -463,7 +483,6 @@ Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al lega
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
 reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5: 5.1–5.3 fatti (download con ripresa,
 URL HTTPS verificati, decompressione gz/tar in streaming). Resta 5.4 (catalogo delle sorgenti), da fare con la
-fase 6. Fase 6: 6.1, 6.2 e 6.3 fatti, con il 5.4 (catalogo release, tabelle `ref_*` partizionate, bulk loader,
-import set-based con workflow, Messenger e comandi `annosynf:release:*`); prossimo passo: 6.4 (database BLAST con
-`makeblastdb`/`blastdbcmd`, estrazione del CDD, sottoinsiemi per organismo). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+fase 6. Fase 6: 6.1, 6.2 e 6.3 fatti, 6.4 fatto (database BLAST di release e sottoinsiemi per organismo), con il 5.4 (catalogo release, tabelle `ref_*` partizionate, bulk loader,
+import set-based con workflow, Messenger e comandi `annosynf:release:*`); prossimo passo: 6.5 (misure su una release reale). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

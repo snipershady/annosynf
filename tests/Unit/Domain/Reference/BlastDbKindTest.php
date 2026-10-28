@@ -20,5 +20,6 @@ final class BlastDbKindTest extends TestCase
         }
 
         self::assertSame(['sp' => 'prot', 'tr' => 'prot', 'uniref' => 'prot', 'ncrna' => 'nucl', 'cdd' => 'rps'], $types);
+        self::assertSame('prot', BlastDbKind::Cdd->sequenceType(), 'an RPS database holds proteins');
     }
 }

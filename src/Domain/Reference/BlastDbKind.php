@@ -20,10 +20,14 @@ enum BlastDbKind: string
      */
     public function dbType(): string
     {
-        return match ($this) {
-            self::NonCodingRna => 'nucl',
-            self::Cdd => 'rps',
-            default => 'prot',
-        };
+        return $this === self::Cdd ? 'rps' : $this->sequenceType();
+    }
+
+    /**
+     * Tipo di sequenze, come lo chiedono `makeblastdb -dbtype` e `blastdbcmd -dbtype` (un DB RPS contiene proteine).
+     */
+    public function sequenceType(): string
+    {
+        return $this === self::NonCodingRna ? 'nucl' : 'prot';
     }
 }

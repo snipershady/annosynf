@@ -30,12 +30,13 @@ final readonly class BlastProcessExecutor
      * @param non-empty-list<string> $command
      * @param list<int>              $acceptedExitCodes codici d'uscita considerati riusciti (es. blastdbcmd
      *                                                  esce con 1 se salta voci non trovate)
+     * @param ?iterable<string>      $input             blocchi per lo stdin (es. FASTA decompresso al volo per makeblastdb)
      *
      * @throws BlastExecutionException se il processo esce con errore o supera il timeout
      */
-    public function execute(string $tool, array $command, string $workingDirectory, array $acceptedExitCodes = [0]): ProcessResult
+    public function execute(string $tool, array $command, string $workingDirectory, array $acceptedExitCodes = [0], ?iterable $input = null): ProcessResult
     {
-        $result = $this->processRunner->run($command, $workingDirectory, $this->timeout, self::ENVIRONMENT);
+        $result = $this->processRunner->run($command, $workingDirectory, $this->timeout, self::ENVIRONMENT, $input);
 
         if ($result->timedOut) {
             throw BlastExecutionException::timedOut($tool, $this->timeout);

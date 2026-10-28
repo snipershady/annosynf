@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Release;
 
+use App\Application\Port\ArchiveExtractor;
+use App\Application\Port\BlastDbBuilder;
 use App\Application\Port\ReferenceDataWriter;
 use App\Application\Port\SourceDownloader;
 use App\Application\Release\ImportReferenceData;
 use App\Domain\Reference\ImportTask;
+use App\Domain\Reference\IndexTask;
 use App\Domain\Reference\ReleasePlan;
 use App\Domain\Reference\ReleaseStatus;
 use App\Domain\Reference\SourceKind;
@@ -40,6 +43,9 @@ final readonly class ReleaseTaskRunner
         private SourceDownloader $downloader,
         private ImportReferenceData $import,
         private ReferenceDataWriter $writer,
+        private ArchiveExtractor $extractor,
+        private BlastDbBuilder $databases,
+        private BlastDatabaseRegistry $registry,
         private ReleaseStorage $storage,
         private ClockInterface $clock,
         private LoggerInterface $logger,
@@ -99,6 +105,12 @@ final readonly class ReleaseTaskRunner
             return [array_sum($counts), 'row counts recorded'];
         }
 
+        $index = IndexTask::tryFrom($task);
+
+        if ($index instanceof IndexTask) {
+            return $this->index($release, $releaseId, $index);
+        }
+
         $import = ImportTask::from($task);
         $path = $this->source($release, $import->source())->getLocalPath() ?? throw new LogicException(\sprintf('"%s" has not been downloaded.', $import->source()->value));
         $this->writer->prepare($releaseId);
@@ -109,6 +121,30 @@ final readonly class ReleaseTaskRunner
         }
 
         return [$outcome->rows, $outcome->summary()];
+    }
+
+    /**
+     * @return array{int, string} sequenze del database e riassunto
+     */
+    private function index(ReferenceRelease $release, int $releaseId, IndexTask $task): array
+    {
+        $source = $this->source($release, $task->source());
+        $path = $source->getLocalPath() ?? throw new LogicException(\sprintf('"%s" has not been downloaded.', $task->source()->value));
+        $name = $task->databaseName($release->getUnirefVariant());
+        $database = $this->storage->databasePath($releaseId, $name);
+        $kind = $task->kind();
+
+        if ($task === IndexTask::ExtractCdd) {
+            // il tar di NCBI contiene già il DB RPS (alias `Cdd.pal` e volumi `Cdd.NN.*`, §A.7.11): si estrae e si verifica
+            $this->extractor->untar($path, \dirname($database));
+            $info = $this->databases->inspect($database, $kind->sequenceType());
+        } else {
+            $info = $this->databases->build($path, $database, $name, $kind->sequenceType());
+        }
+
+        $this->registry->register($release, $kind, $name, $database, $info);
+
+        return [$info->sequences, \sprintf('%s: %d sequences, %d letters (BLAST+ %s)', $name, $info->sequences, $info->letters, $info->version ?? 'unknown')];
     }
 
     /**
