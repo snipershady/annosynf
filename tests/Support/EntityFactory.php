@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Support;
 
+use App\Domain\Reference\ReleaseType;
+use App\Domain\Reference\UnirefVariant;
+use App\Entity\ReferenceRelease;
 use App\Entity\User;
 use DateTimeImmutable;
 
@@ -42,5 +45,13 @@ final class EntityFactory
     public static function pendingUser(string $email = 'pending@example.org', string $username = 'pending'): User
     {
         return new User($email, $username, 'hashed-password', self::now());
+    }
+
+    public static function release(
+        ReleaseType $type = ReleaseType::UniRef,
+        string $version = '2026_03',
+        UnirefVariant $unirefVariant = UnirefVariant::UniRef90,
+    ): ReferenceRelease {
+        return new ReferenceRelease($type, $version, $type === ReleaseType::UniRef ? $unirefVariant : null, 'Cdd', self::now());
     }
 }

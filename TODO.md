@@ -327,8 +327,15 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
 
 ## Fase 6 — Persistenza e import delle release (M3) · elimina DBI, client mysql, mysqlimport
 
-- [ ] **6.1 Migration** di `reference_release`, `reference_source_file`, `reference_task`,
+- [x] **6.1 Migration** di `reference_release`, `reference_source_file`, `reference_task`,
   `reference_blast_db`, `organism_set*` (ORM) e delle tabelle `ref_*` partizionate (SQL esplicito).
+  Entity in `src/Entity`, enum di stato in `src/Domain/Reference`, migration `Version20261028200023` (ORM) e
+  `Version20261028200500` (13 tabelle `ref_*` `PARTITION BY LIST (release_id)`, escluse dal diff con
+  `schema_filter`). `ReferenceSchemaTest` verifica che lo schema migrato coincida con le entity e che le `ref_*`
+  siano partizionate. Differenze dalla spec annotate in CLAUDE.md §B.4.1/§B.4.2 (variante UniRef `''` invece di
+  NULL per il vincolo di unicità, versione obbligatoria alla creazione, hash su tutti i dizionari, timestamp al
+  secondo). Aggiornato `symfony/mime` a 8.1.10 (advisory CVE-2026-45070 uscito il 2026-10-28, bloccava
+  `composer audit`).
 - [ ] **6.2 `MysqlLoadDataBulkLoader`**: `LOAD DATA LOCAL INFILE` via `Pdo\Mysql` limitato a `var/tmp/bulk`.
   Prerequisito: `local_infile=ON` sul server (oggi è `0`).
 - [x] **Descrizione in `ref_enzyme`** (deciso il 2026-10-27): due colonne, `description` = testo di ENZYME
@@ -412,5 +419,6 @@ Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al lega
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
 reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5: 5.1–5.3 fatti (download con ripresa,
 URL HTTPS verificati, decompressione gz/tar in streaming). Resta 5.4 (catalogo delle sorgenti), da fare con la
-fase 6; prossimo passo: fase 6 (persistenza e import delle release, M3). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+fase 6. Fase 6: 6.1 fatto (catalogo release e tabelle `ref_*` partizionate); prossimo passo: 6.2
+(`MysqlLoadDataBulkLoader`, richiede `local_infile=ON` sul server MySQL). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.
