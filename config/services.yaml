@@ -29,6 +29,10 @@ services:
     TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierServiceInterface:
         alias: TypeIdentifier\Service\EffectivePrimitiveTypeIdentifierService
 
+    # Catalogo delle sorgenti di riferimento (config/packages/annosynf.yaml): il dominio non conosce il container.
+    App\Domain\Reference\SourceCatalogue:
+        arguments: ['%annosynf.sources%']
+
     # snipershady/emailvalidator: il resolver MX (DNS) si inietta, così i test non fanno rete.
     EmailValidator\Service\DnsMxResolver: ~
     EmailValidator\Service\MxResolver:
@@ -40,6 +44,9 @@ when@test:
         _defaults:
             autowire: true
         App\Tests\Support\FakeMxResolver: ~
+        # Le sorgenti delle release arrivano dalla mini-release di tests/Fixtures/release, senza rete.
+        App\Tests\Support\FakeSourceDownloader: ~
+        App\Application\Port\SourceDownloader: '@App\Tests\Support\FakeSourceDownloader'
         EmailValidator\Service\MxResolver:
             alias: App\Tests\Support\FakeMxResolver
             public: true

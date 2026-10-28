@@ -320,10 +320,13 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   Verificato sul `Cdd_LE.tar.gz` reale (1,9 GB, CDD v3.22): 349 file identici a GNU tar, 12 MB di memoria, DB
   leggibile da `blastdbcmd` e `rpstblastn`. Il CDD 2026 è a volumi (`Cdd.pal` + `Cdd.NN.*`) e non ha `Cdd.rps`,
   che il legacy usa per capire se è già estratto (§A.7.11).
-- [ ] **5.4 Catalogo delle sorgenti** (emerso in 5.2): gli URL della tabella di §B.10 in configurazione
+- [x] **5.4 Catalogo delle sorgenti** (emerso in 5.2): gli URL della tabella di §B.10 in configurazione
   (`annosynf.sources`, con la variante UniRef nel percorso) invece che solo in CLAUDE.md, più un comando
   `annosynf:sources:check` (HEAD di ogni sorgente e dei mirror, come `annosynf:blast:check`) per ripetere questa
   verifica quando un URL cambia. Da fare insieme al workflow Release (fase 6), che ne è il primo utente.
+  Fatto con il 6.3: `config/packages/annosynf.yaml` (parametro `annosynf.sources`), `SourceCatalogue` (dominio:
+  URL per `SourceKind`, `{uniref}` per la variante, sorgenti per tipo di release), `annosynf:sources:check` (HEAD in
+  parallelo di sorgenti, varianti UniRef e mirror; fallisce se un URL configurato non risponde 200).
 
 ## Fase 6 — Persistenza e import delle release (M3) · elimina DBI, client mysql, mysqlimport
 
@@ -349,8 +352,19 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
 - [x] **Descrizione in `ref_enzyme`** (deciso il 2026-10-27): due colonne, `description` = testo di ENZYME
   (`EnzymeEntry::description()`, per la UI) e `legacy_description` = `EnzymeEntry::legacyDescription()` (per
   l'export compatibile).
-- [ ] **6.3 Task di import set-based** (staging + `INSERT … SELECT … JOIN`), idempotenti, con workflow
+- [x] **6.3 Task di import set-based** (staging + `INSERT … SELECT … JOIN`), idempotenti, con workflow
   Release e Messenger; lock per release.
+  Dominio: `ReleasePlan`, `ImportTask`, `ProteinRecord`, `MappingResult`. Application: `ImportReferenceData` e la
+  porta `ReferenceDataWriter`; adapter `MysqlReferenceDataWriter` (partizioni, staging temporanee, dizionari per
+  MD5, associazioni con join e conteggio degli scarti). Orchestrazione in `src/Release` (`ReleaseCreator`,
+  `ReleaseTaskRunner`, `ReleaseStorage`), messaggio `RunReleaseTask` sulla nuova coda `import`
+  (`MESSENGER_IMPORT_TRANSPORT_DSN`), workflow `reference_release` (installato `symfony/workflow`), comandi
+  `annosynf:release:create|list|show|retry|delete`. Test end-to-end sulla mini-release `tests/Fixtures/release/`
+  (fake `SourceDownloader` nel container di test): import completo, errore e ripresa, release duplicate, lock.
+  Verificato sui file reali del 2026-10-28 (Swiss-Prot completo in 38 s, tempi in CLAUDE.md §B.5.1).
+- [ ] **Release bloccata da un worker morto** (emerso in 6.3): il lock per release dura 12 ore e il task resta
+  `running`; oggi si sblocca con `annosynf:release:delete --force` o aspettando la scadenza. Valutare un lock
+  rinnovato durante il task (heartbeat) quando si misura l'import completo (6.5).
 - [ ] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
   porta `BlastDbBuilder`, sottoinsiemi per organismo con `FastaSubsetWriter`.
 - [ ] **6.5 Misure** su una release UniRef reale (tempo, spazio) e decisione sull'"annotazione pigra"
@@ -435,6 +449,11 @@ Requisiti dell'ambiente emersi durante il porting, da riportare nella guida di i
   `var/tmp/bulk` (`Pdo\Mysql::ATTR_LOCAL_INFILE_DIRECTORY`, parametro `annosynf.bulk_dir`), che deve stare sull'host
   dove gira PHP (il file lo invia il client, quindi MySQL può essere remoto). `ATTR_LOCAL_INFILE` resta spento: acceso,
   il server potrebbe chiedere al client qualunque file.
+- **Worker degli import** (step 6.3): le release si importano solo se gira un worker sulla coda `import`
+  (`bin/console messenger:consume import`, sotto un supervisore come systemd o supervisord); la coda è lo stream
+  Redis di `MESSENGER_IMPORT_TRANSPORT_DSN`. Un task può durare ore: niente `--time-limit` brevi su questo worker.
+- **Spazio disco** (step 6.3): i file di ogni release restano in `ANNOSYNF_STORAGE_DIR/releases/<id>/` (circa 60 GB per
+  una release uniprotkb, 30–80 GB per una uniref secondo la variante, più le tabelle MySQL).
 - **MySQL, dimensionamento** (§B.4.4, da confermare con le misure dello step 6.5): `max_allowed_packet` ≥ 256M (in
   locale 64M) e `innodb_buffer_pool_size` intorno al 50% della RAM del server DB (in locale 128M, il default).
 
@@ -444,6 +463,7 @@ Fasi 0–3 completate: M1 chiusa, port nativi di dna2pep e CPC2 identici al lega
 Fase 4 completata: parser di tutti i file di riferimento in `src/Domain/Reference`, identici al legacy sui file
 reali del 2026 salvo le correzioni dichiarate (§A.12). Fase 5: 5.1–5.3 fatti (download con ripresa,
 URL HTTPS verificati, decompressione gz/tar in streaming). Resta 5.4 (catalogo delle sorgenti), da fare con la
-fase 6. Fase 6: 6.1 e 6.2 fatti (catalogo release, tabelle `ref_*` partizionate, bulk loader); prossimo passo:
-6.3 (task di import set-based con workflow Release e Messenger), insieme al 5.4 (catalogo delle sorgenti). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
+fase 6. Fase 6: 6.1, 6.2 e 6.3 fatti, con il 5.4 (catalogo release, tabelle `ref_*` partizionate, bulk loader,
+import set-based con workflow, Messenger e comandi `annosynf:release:*`); prossimo passo: 6.4 (database BLAST con
+`makeblastdb`/`blastdbcmd`, estrazione del CDD, sottoinsiemi per organismo). Le fasi 1–4 non toccano il database e producono da sole un risultato verificabile: i port nativi identici al
 legacy.

@@ -1,0 +1,104 @@
+----------------------------------------------------------------------------
+        UniProt Knowledgebase:
+          Swiss-Prot Protein Knowledgebase
+          TrEMBL Protein Database
+        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland
+        European Bioinformatics Institute (EBI); Hinxton, United Kingdom
+        Protein Information Resource (PIR); Washington DC, USA
+----------------------------------------------------------------------------
+
+Description: Controlled vocabulary of species
+Name:        speclist.txt
+Release:     2026_03 of 02-Sep-2026
+
+----------------------------------------------------------------------------
+
+See the UniProtKB user manual for a description of the rules followed for
+the creation of the organism (species) identification codes.
+
+- The letter which follows each code indicates which taxonomic 'kingdom' an
+  organism belongs to. It can be one of the following:
+
+  'A' for archaea (=archaebacteria)
+  'B' for bacteria (=prokaryota or eubacteria)
+  'E' for eukaryota (=eukarya)
+  'V' for viruses and phages (=viridae)
+  'O' for others (such as artificial sequences)
+
+- The one to seven-digit number is used to indicate to which taxonomic node
+  in the NCBI taxonomy an organism is assigned.
+
+- This document contains two sublists:
+
+  1) "Real" organism codes
+
+   These codes are used in both UniProtKB/Swiss-Prot and UniProtKB/TrEMBL.
+   They correspond to a specific and specified organism.
+   They are assigned specific official (scientific) names and optionally
+   common names and synonyms.
+
+  2) "Virtual" codes that regroup organisms at a certain taxonomic level
+
+   These codes are used only in UniProtKB/TrEMBL.
+   They generally correspond to a 'pool' of organisms, which may be as wide
+   as a kingdom.
+   They are assigned a specific official or semi-official name of that
+   group of organism. Examples: Amphibia, Coleoptera, Orthomyxoviridae,
+   Zygomycetes, etc.
+
+- Total number of identification codes currently defined: 27983.
+
+
+=======================
+(1) Real organism codes
+=======================
+
+Code    Taxon    N=Official (scientific) name
+        Node     C=Common name
+                 S=Synonym
+_____ _ _______  ____________________________________________________________
+AADNV V  648330: N=Aedes albopictus densovirus (isolate Boublik/1994)
+                 C=AalDNV
+ABAMA E  118452: N=Abacion magnum
+                 C=Millipede
+ECOLI B   83333: N=Escherichia coli (strain K12)
+HUMAN E    9606: N=Homo sapiens
+                 C=Human
+ACIAM A    2283: N=Acidianus ambivalens
+                 S=Desulfurolobus ambivalens
+UNCCM O  702656: N=Unclassified compost metagenome
+ZYMVR V  117129: N=Zucchini yellow mosaic virus (strain Reunion Island)
+                 C=ZYMV
+ZYMVS V  117130: N=Zucchini yellow mosaic virus (strain Singapore)
+                 C=ZYMV
+ZYTRE E  273283: N=Zythia resinae
+                 C=Resin sarea lichen
+                 S=Sarea resinae
+
+
+=======================================================================
+(2) "Virtual" codes that regroup organisms at a certain taxonomic level
+=======================================================================
+
+9ABAC V  558016: N=Alphabaculovirus
+9ACAR E    6933: N=Acari
+9ACTI E    7898: N=Actinopterygii
+9ACTN B  201174: N=Actinomycetota
+                 S=Actinobacteria
+9ACTO B    2037: N=Actinomycetales
+9ADEN V   10508: N=Adenoviridae
+9AGAM E  155619: N=Agaricomycetes
+9AGAR E    5338: N=Agaricales
+9ALPC V  693996: N=Alphacoronavirus
+9ALPH V   10293: N=Alphaherpesvirinae
+9ALTE B   72275: N=Alteromonadaceae
+9ALTO E 3701028: N=Altocrustacea
+9VIRI E   33090: N=Viridiplantae
+9VIRU V   10239: N=Viruses
+9XANT B     338: N=Xanthomonas
+9ZZZZ X       1: N=root
+
+-----------------------------------------------------------------------
+Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+Distributed under the Creative Commons Attribution (CC BY 4.0) License
+-----------------------------------------------------------------------

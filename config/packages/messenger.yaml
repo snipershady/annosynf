@@ -9,6 +9,12 @@ framework:
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
+            # Import delle release: nessun nuovo tentativo automatico, perché un task fallito segna la release come
+            # failed e si riprende con annosynf:release:retry (un task può durare ore).
+            import:
+                dsn: '%env(MESSENGER_IMPORT_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 0
             failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
@@ -23,5 +29,4 @@ framework:
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            App\Message\RunReleaseTask: import

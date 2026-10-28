@@ -42,33 +42,47 @@ final class ReferenceReleaseTest extends TestCase
     {
         $release = EntityFactory::release();
 
-        $release->moveTo(ReleaseStatus::Pending, self::at('10:00'));
+        $release->setStatus(ReleaseStatus::Pending, ['at' => self::at('10:00')]);
         self::assertNull($release->getStartedAt(), 'still waiting');
 
-        $release->moveTo(ReleaseStatus::Downloading, self::at('10:01'));
-        $release->fail('download of trembl failed');
+        $release->setStatus(ReleaseStatus::Downloading, ['at' => self::at('10:01')]);
+        $release->setStatus(ReleaseStatus::Failed, ['at' => self::at('10:02'), 'error' => 'download of trembl failed']);
 
         self::assertSame(ReleaseStatus::Failed, $release->getStatus());
         self::assertSame('download of trembl failed', $release->getError());
 
-        $release->moveTo(ReleaseStatus::Importing, self::at('11:00'));
+        $release->setStatus(ReleaseStatus::Importing, ['at' => self::at('11:00')]);
         self::assertNull($release->getError(), 'a retry clears the previous error');
 
-        $release->moveTo(ReleaseStatus::Ready, self::at('12:00'));
+        $release->setStatus(ReleaseStatus::Ready, ['at' => self::at('12:00')]);
 
         self::assertSame(ReleaseStatus::Ready, $release->getStatus());
         self::assertSame('10:01', $release->getStartedAt()?->format('H:i'), 'the first start is kept');
         self::assertSame('12:00', $release->getReadyAt()?->format('H:i'));
 
-        $release->fail('rebuilt');
+        $release->setStatus(ReleaseStatus::Failed, ['at' => self::at('13:00'), 'error' => 'rebuilt']);
         self::assertNull($release->getReadyAt());
     }
 
-    public function testFailureNeedsAReason(): void
+    /**
+     * @return iterable<string, array{ReleaseStatus, array<string, mixed>}>
+     */
+    public static function invalidStatusChanges(): iterable
+    {
+        yield 'no time' => [ReleaseStatus::Importing, []];
+        yield 'failure without error' => [ReleaseStatus::Failed, ['at' => new DateTimeImmutable()]];
+        yield 'error without failure' => [ReleaseStatus::Ready, ['at' => new DateTimeImmutable(), 'error' => 'x']];
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    #[DataProvider('invalidStatusChanges')]
+    public function testAStatusChangeNeedsItsContext(ReleaseStatus $status, array $context): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        EntityFactory::release()->moveTo(ReleaseStatus::Failed, self::at('10:00'));
+        EntityFactory::release()->setStatus($status, $context);
     }
 
     public function testSourceVersionsAndCountsAreKeptSorted(): void

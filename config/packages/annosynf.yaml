@@ -1,0 +1,19 @@
+# Sorgenti dei dati di riferimento (CLAUDE.md §B.10), verificate con `bin/console annosynf:sources:check`.
+# Solo HTTPS (HttpClient non supporta FTP); `{uniref}` è la variante UniRef in minuscolo (uniref50|uniref90|uniref100).
+# I server UniProt alternativi (EBI, Expasy) li conosce SourceMirrors.
+parameters:
+    annosynf.sources:
+        reldate: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/reldate.txt'
+        uniref_release_note: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/uniref/{uniref}/{uniref}.release_note'
+        swissprot: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz'
+        trembl: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.fasta.gz'
+        uniref: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/uniref/{uniref}/{uniref}.fasta.gz'
+        idmapping: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz'
+        go: 'https://purl.obolibrary.org/obo/go/go-basic.obo'
+        enzyme: 'https://ftp.expasy.org/databases/enzyme/enzyme.dat'
+        pathway: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/pathway.txt'
+        speclist: 'https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/speclist.txt'
+        cdd: 'https://ftp.ncbi.nih.gov/pub/mmdb/cdd/little_endian/Cdd_LE.tar.gz'
+        cdd_table: 'https://ftp.ncbi.nih.gov/pub/mmdb/cdd/cddid_all.tbl.gz'
+        rnacentral: 'https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/sequences/rnacentral_active.fasta.gz'
+        pfam2go: 'https://current.geneontology.org/ontology/external2go/pfam2go'

@@ -129,30 +129,35 @@ class ReferenceRelease
     }
 
     /**
-     * Passa a uno stato del workflow: la prima uscita da `pending` segna l'inizio, `ready` la fine; un nuovo
-     * stato cancella l'errore di un tentativo precedente.
+     * Marking store del workflow `reference_release` (config/packages/workflow.yaml): lo stato cambia solo con
+     * `WorkflowInterface::apply()`, che passa qui il contesto della transizione. La prima uscita da `pending` segna
+     * l'inizio, `ready` la fine; un nuovo stato cancella l'errore di un tentativo precedente.
+     *
+     * @param array<string, mixed> $context `at` (DateTimeImmutable) sempre, `error` (string) solo per `failed`
+     *
+     * @throws InvalidArgumentException se il contesto non porta l'ora o l'errore non accompagna `failed`
      */
-    public function moveTo(ReleaseStatus $status, DateTimeImmutable $at): void
+    public function setStatus(ReleaseStatus $status, array $context = []): void
     {
-        if ($status === ReleaseStatus::Failed) {
-            throw new InvalidArgumentException('Use fail() to record why a release failed.');
+        $at = $context['at'] ?? null;
+        $error = $context['error'] ?? null;
+
+        if (!$at instanceof DateTimeImmutable) {
+            throw new InvalidArgumentException('A release status change needs its time ("at" in the workflow context).');
+        }
+
+        if ($error !== null && !\is_string($error) || ($status === ReleaseStatus::Failed) !== ($error !== null)) {
+            throw new InvalidArgumentException('An error message goes with the failed status, and only with it.');
         }
 
         $this->status = $status;
-        $this->error = null;
+        $this->error = $error;
 
         if ($status !== ReleaseStatus::Pending) {
             $this->startedAt ??= $at;
         }
 
         $this->readyAt = $status === ReleaseStatus::Ready ? $at : null;
-    }
-
-    public function fail(string $error): void
-    {
-        $this->status = ReleaseStatus::Failed;
-        $this->error = $error;
-        $this->readyAt = null;
     }
 
     public function getError(): ?string
@@ -165,7 +170,11 @@ class ReferenceRelease
      */
     public function getSourceVersions(): array
     {
-        return $this->sourceVersions;
+        // MySQL riordina le chiavi delle colonne JSON (prima per lunghezza): l'ordine alfabetico si ricrea qui
+        $versions = $this->sourceVersions;
+        ksort($versions);
+
+        return $versions;
     }
 
     /**
@@ -175,7 +184,6 @@ class ReferenceRelease
     public function recordSourceVersion(string $source, string $version): void
     {
         $this->sourceVersions[$source] = $version;
-        ksort($this->sourceVersions);
     }
 
     /**
@@ -183,7 +191,13 @@ class ReferenceRelease
      */
     public function getCounts(): ?array
     {
-        return $this->counts;
+        $counts = $this->counts;
+
+        if ($counts !== null) {
+            ksort($counts);
+        }
+
+        return $counts;
     }
 
     /**
@@ -191,7 +205,6 @@ class ReferenceRelease
      */
     public function recordCounts(array $counts): void
     {
-        ksort($counts);
         $this->counts = $counts;
     }
 

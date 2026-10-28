@@ -1,0 +1,24 @@
+framework:
+    workflows:
+        # Stato di una release di riferimento (CLAUDE.md §B.5.1). Le fasi si susseguono come i task del piano
+        # (ReleasePlan); da ogni fase attiva si può fallire, e dopo un errore si riprende dalla fase del primo task
+        # non completato.
+        reference_release:
+            type: state_machine
+            supports: [App\Entity\ReferenceRelease]
+            marking_store:
+                type: method
+                property: status
+            initial_marking: pending
+            places: [pending, downloading, importing, mapping, indexing, ready, failed]
+            transitions:
+                download: { from: pending, to: downloading }
+                import: { from: downloading, to: importing }
+                map: { from: importing, to: mapping }
+                index: { from: mapping, to: indexing }
+                complete: { from: indexing, to: ready }
+                fail: { from: [pending, downloading, importing, mapping, indexing], to: failed }
+                resume_downloading: { from: failed, to: downloading }
+                resume_importing: { from: failed, to: importing }
+                resume_mapping: { from: failed, to: mapping }
+                resume_indexing: { from: failed, to: indexing }

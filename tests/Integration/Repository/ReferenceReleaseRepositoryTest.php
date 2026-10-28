@@ -53,6 +53,22 @@ final class ReferenceReleaseRepositoryTest extends DatabaseTestCase
         self::assertNull($releases->findOneByIdentity(ReleaseType::UniProtKb, '2026_04', null));
     }
 
+    public function testReleasesTasksAndSourcesAreListedInCreationOrder(): void
+    {
+        $second = EntityFactory::release(ReleaseType::UniRef, '2026_04');
+        $first = EntityFactory::release(ReleaseType::UniRef, '2026_03');
+        $tasks = [new ReferenceTask($first, 'import_go'), new ReferenceTask($first, 'download:go'), new ReferenceTask($second, 'finalize')];
+        $sources = [new ReferenceSourceFile($first, SourceKind::Pfam2Go, 'https://example.org/pfam2go'), new ReferenceSourceFile($first, SourceKind::GeneOntology, 'https://example.org/go')];
+        $this->persistAndReload($first, $second, ...$tasks, ...$sources);
+        $releases = self::getContainer()->get(ReferenceReleaseRepository::class);
+        $all = $releases->findAllById();
+
+        self::assertSame(['2026_03', '2026_04'], array_map(static fn (ReferenceRelease $release): string => $release->getVersion(), $all));
+        self::assertSame(['import_go', 'download:go'], array_map(static fn (ReferenceTask $task): string => $task->getTask(), $releases->tasks($all[0])));
+        self::assertSame([SourceKind::Pfam2Go, SourceKind::GeneOntology], array_map(static fn (ReferenceSourceFile $source): SourceKind => $source->getKind(), $releases->sources($all[0])));
+        self::assertSame([], $releases->sources($all[1]));
+    }
+
     public function testTheSameUniProtKbReleaseCannotBeCreatedTwice(): void
     {
         $this->persistAndReload(EntityFactory::release(ReleaseType::UniProtKb));
@@ -66,7 +82,7 @@ final class ReferenceReleaseRepositoryTest extends DatabaseTestCase
     {
         $user = EntityFactory::user();
         $release = EntityFactory::release();
-        $release->moveTo(ReleaseStatus::Ready, EntityFactory::now());
+        $release->setStatus(ReleaseStatus::Ready, ['at' => EntityFactory::now()]);
         $release->recordSourceVersion('enzyme', '02-Sep-2026');
         $release->recordCounts(['ref_protein' => 3]);
 
