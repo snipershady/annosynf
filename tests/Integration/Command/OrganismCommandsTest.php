@@ -77,6 +77,7 @@ use App\Release\OrganismSetCreator;
 use App\Release\OrganismSetDatabaseBuilder;
 use App\Release\OrganismSetNotCreatedException;
 use App\Release\ReleaseCreator;
+use App\Release\ReleaseLock;
 use App\Release\ReleaseStorage;
 use App\Release\ReleaseTaskRunner;
 use App\Repository\ReferenceReleaseRepository;
@@ -161,6 +162,7 @@ use Symfony\Component\Console\Command\Command;
 #[UsesClass(ReleaseTaskRunner::class)]
 #[UsesClass(ReferenceReleaseRepository::class)]
 #[UsesClass(ReleaseCreator::class)]
+#[UsesClass(ReleaseLock::class)]
 final class OrganismCommandsTest extends ReleaseTestCase
 {
     public function testAnOrganismIsFoundInTheCatalogue(): void

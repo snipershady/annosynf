@@ -68,6 +68,7 @@ use App\Message\RunReleaseTask;
 use App\MessageHandler\RunReleaseTaskHandler;
 use App\Release\BlastDatabaseRegistry;
 use App\Release\ReleaseCreator;
+use App\Release\ReleaseLock;
 use App\Release\ReleaseNotCreatedException;
 use App\Release\ReleaseStorage;
 use App\Release\ReleaseTaskRunner;
@@ -78,11 +79,14 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 
 #[CoversClass(ReleaseCreateCommand::class)]
 #[CoversClass(ReleaseListCommand::class)]
 #[CoversClass(ReleaseShowCommand::class)]
 #[CoversClass(ReleaseRetryCommand::class)]
+#[CoversClass(ReleaseLock::class)]
 #[CoversClass(ReleaseDeleteCommand::class)]
 #[CoversClass(ConsoleTable::class)]
 #[UsesClass(TarHeader::class)]
@@ -180,6 +184,37 @@ final class ReleaseCommandsTest extends ReleaseTestCase
 
         self::assertSame(Command::FAILURE, $again->statusCode);
         self::assertStringContainsString('already exists', $again->getDisplay());
+    }
+
+    public function testAReleaseStoppedByADeadWorkerIsQueuedAgainWithForce(): void
+    {
+        self::runCommand('annosynf:release:create', ['--type' => 'uniprotkb'], interactive: false);
+        $id = (int) $this->onlyRelease()->getId();
+        // il messaggio iniziale è andato perso, come con un worker ucciso: la release non è fallita, è ferma
+        $transport = self::getContainer()->get('messenger.transport.import');
+        self::assertInstanceOf(InMemoryTransport::class, $transport);
+        $transport->reset();
+
+        $refused = self::runCommand('annosynf:release:retry', ['id' => $id], interactive: false);
+        self::assertSame(Command::FAILURE, $refused->statusCode);
+        self::assertStringContainsString('has not failed: it is still running', $refused->getDisplay());
+
+        $lock = self::getContainer()->get(LockFactory::class)->createLock(ReleaseLock::name($id));
+        self::assertTrue($lock->acquire());
+
+        try {
+            $alive = self::runCommand('annosynf:release:retry', ['id' => $id, '--force' => true], interactive: false);
+            self::assertSame(Command::FAILURE, $alive->statusCode);
+            self::assertStringContainsString('A worker holds the lock', $alive->getDisplay());
+        } finally {
+            $lock->release();
+        }
+
+        $forced = self::runCommand('annosynf:release:retry', ['id' => $id, '--force' => true], interactive: false);
+        self::assertSame(Command::SUCCESS, $forced->statusCode, $forced->getDisplay());
+        $this->work();
+
+        self::assertSame(ReleaseStatus::Ready, $this->reload($id)->getStatus());
     }
 
     public function testOnlyAFailedReleaseCanBeRetried(): void

@@ -65,6 +65,7 @@ use App\Message\RunReleaseTask;
 use App\MessageHandler\RunReleaseTaskHandler;
 use App\Release\BlastDatabaseRegistry;
 use App\Release\ReleaseCreator;
+use App\Release\ReleaseLock;
 use App\Release\ReleaseNotCreatedException;
 use App\Release\ReleaseStorage;
 use App\Release\ReleaseTaskRunner;
@@ -139,6 +140,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[UsesClass(ReferenceReleaseRepository::class)]
 #[UsesClass(UnexpectedReleaseDataException::class)]
 #[UsesClass(BlastDatabaseRegistry::class)]
+#[UsesClass(ReleaseLock::class)]
 final class ReleaseImportTest extends ReleaseTestCase
 {
     public function testAUniRefReleaseIsImportedTaskByTask(): void

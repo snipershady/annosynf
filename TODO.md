@@ -362,9 +362,10 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
   `annosynf:release:create|list|show|retry|delete`. Test end-to-end sulla mini-release `tests/Fixtures/release/`
   (fake `SourceDownloader` nel container di test): import completo, errore e ripresa, release duplicate, lock.
   Verificato sui file reali del 2026-10-28 (Swiss-Prot completo in 38 s, tempi in CLAUDE.md §B.5.1).
-- [ ] **Release bloccata da un worker morto** (emerso in 6.3): il lock per release dura 12 ore e il task resta
-  `running`; oggi si sblocca con `annosynf:release:delete --force` o aspettando la scadenza. Valutare un lock
-  rinnovato durante il task (heartbeat) quando si misura l'import completo (6.5).
+- [x] **Release bloccata da un worker morto** (emerso in 6.3, chiuso il 2026-10-29): `annosynf:release:retry <id>
+  --force` accoda di nuovo una release non fallita se nessun worker tiene il lock per release (`ReleaseLock`); senza
+  `--force` o con il lock preso rifiuta. Il task rimasto `running` riparte da capo (tentativi + 1). Resta da valutare
+  un heartbeat del lock durante i task molto lunghi (6.5).
 - [x] **6.4 Indicizzazione** con `makeblastdb`/`blastdbcmd` (unica dipendenza esterna rimasta) dietro la
   porta `BlastDbBuilder`, sottoinsiemi per organismo con `FastaSubsetWriter`.
   - [x] Porta `BlastDbBuilder` + adapter `BlastPlusDbBuilder` (`src/Infrastructure/Process`): FASTA (anche `.gz`)
@@ -389,12 +390,21 @@ Fixture minime in `tests/Fixtures/reference/`, estratte dai file reali (con i ca
     step 6.5.
 - [ ] **6.5 Misure** su una release UniRef reale (tempo, spazio) e decisione sull'"annotazione pigra"
   (§B.4.2), annotate in CLAUDE.md.
-  Rimandato (2026-10-28): l'ambiente di sviluppo ha 13 GB liberi su 78 (8 core, 15 GB di RAM) e non basta. L'utente
+  Rimandato (2026-10-28), poi ripreso il 2026-10-29 su una macchina da 246 GB (173 GB liberi) con una release UniRef50
+  (id 1): download e import completati, `map_protein_go` interrotto dall'utente e da riprendere con
+  `annosynf:release:retry 1 --force`. Misure già disponibili: vedi sotto "Misure della release 1".
+  Rimandato in origine (2026-10-28): l'ambiente di sviluppo ha 13 GB liberi su 78 (8 core, 15 GB di RAM) e non basta. L'utente
   prepara un ambiente più capiente; la fase si fa lì, tutta insieme.
   - **Requisiti dell'ambiente**: circa 300 GB di disco liberi (sorgenti complete circa 90 GB compressi, database BLAST
     circa 60 GB, più lo spazio di MySQL per `ref_protein_go`, che con TrEMBL può superare 10⁹ righe), almeno 16 GB di
     RAM, MySQL 8.4+ con `local_infile=ON`, `innodb_buffer_pool_size` ≥ 8 GB e `max_allowed_packet` ≥ 256M, Redis 8,
     BLAST+ 2.17, un worker sulla coda `import`. `ANNOSYNF_STORAGE_DIR` e `BLAST_DB_DIR` possono stare su volumi diversi.
+  - **Misure della release 1** (UniRef50 2026_03, MySQL con buffer pool ≥ 8 GB, 2026-10-28/29): download 3 h 12 min
+    in totale, di cui RNAcentral (11,9 GB) 3 h 12 min (EBI lento, gli altri file 5–6 min l'uno: UniRef50 8,8 GB in
+    5 min 45 s, idmapping 7,1 GB in 5 min 38 s, Cdd 1,9 GB in 2 min 46 s); `import_go` 1 s, `import_enzymes` 1 s,
+    `import_domains` 2 s, `import_proteins:sp` 20 s (575 748 righe), `import_proteins:uniref` 56 min 58 s
+    (38 840 027 righe, circa 11 360 al secondo); `map_protein_go` avviato alle 02:41 e interrotto, da misurare.
+    Spazio: `var/storage/releases/1` 29 GB di sorgenti.
   - **Piano in due tempi** (se serve ripartire da poco): 6.5a release UniRef50 con Swiss-Prot, GO, enzimi, pathway,
     domini, Pfam2GO, speclist, Cdd e idmapping (circa 10 GB su disco, senza RNAcentral né TrEMBL); 6.5b release
     completa con TrEMBL (40,6 GB) e RNAcentral (11,9 GB), per i numeri dell'"annotazione pigra".

@@ -7,6 +7,7 @@ namespace App\MessageHandler;
 use App\Domain\Reference\ReleaseStatus;
 use App\Entity\ReferenceRelease;
 use App\Message\RunReleaseTask;
+use App\Release\ReleaseLock;
 use App\Release\ReleaseTaskRunner;
 use App\Repository\ReferenceReleaseRepository;
 use Symfony\Component\Lock\LockFactory;
@@ -35,7 +36,7 @@ final readonly class RunReleaseTaskHandler
 
     public function __invoke(RunReleaseTask $message): void
     {
-        $lock = $this->locks->createLock('annosynf-release-' . $message->releaseId, self::LOCK_TTL);
+        $lock = $this->locks->createLock(ReleaseLock::name($message->releaseId), self::LOCK_TTL);
 
         if (!$lock->acquire()) {
             return;

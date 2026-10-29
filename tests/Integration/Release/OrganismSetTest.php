@@ -79,6 +79,7 @@ use App\Release\OrganismSetCreator;
 use App\Release\OrganismSetDatabaseBuilder;
 use App\Release\OrganismSetNotCreatedException;
 use App\Release\ReleaseCreator;
+use App\Release\ReleaseLock;
 use App\Release\ReleaseStorage;
 use App\Release\ReleaseTaskRunner;
 use App\Repository\ReferenceReleaseRepository;
@@ -162,6 +163,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[UsesClass(ReferenceBlastDb::class)]
 #[UsesClass(ReleaseCreator::class)]
 #[UsesClass(ReleaseStorage::class)]
+#[UsesClass(ReleaseLock::class)]
 final class OrganismSetTest extends ReleaseTestCase
 {
     public function testTheCatalogueIsSearchedByNameCodeAndTaxonId(): void
